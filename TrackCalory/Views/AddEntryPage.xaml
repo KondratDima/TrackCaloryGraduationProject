@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrackCalory.Views.AddEntryPage"
+             Title="Додати запис">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+
+            <Label Text="Додати новий запис про калорії" 
+                   FontSize="24" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20"/>
+
+            <Label Text="Опис страви:" FontSize="16"/>
+            <Entry x:Name="DescriptionEntry"
+                   Placeholder="Наприклад: Омлет з овочами"
+                   FontSize="16"/>
+
+            <Label Text="Кількість калорій:" FontSize="16"/>
+            <Entry x:Name="CaloriesEntry"
+                   Placeholder="Наприклад: 250"
+                   Keyboard="Numeric"
+                   FontSize="16"/>
+
+            <Label Text="Дата:" FontSize="16"/>
+            <DatePicker x:Name="DatePicker" FontSize="16"/>
+
+            <Button Text="Зберегти"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    FontSize="18"
+                    Clicked="OnSaveClicked"
+                    Margin="0,20,0,0"/>
+
+            <Button Text="Скасувати"
+                    BackgroundColor="#f44336"
+                    TextColor="White"
+                    FontSize="18"
+                    Clicked="OnCancelClicked"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
