@@ -27,14 +27,14 @@
             <DatePicker x:Name="DatePicker" FontSize="16"/>
 
             <Button Text="Зберегти"
-                    BackgroundColor="#4CAF50"
+                    BackgroundColor="YellowGreen"
                     TextColor="White"
                     FontSize="18"
                     Clicked="OnSaveClicked"
                     Margin="0,20,0,0"/>
 
             <Button Text="Скасувати"
-                    BackgroundColor="#f44336"
+                    BackgroundColor="OrangeRed"
                     TextColor="White"
                     FontSize="18"
                     Clicked="OnCancelClicked"/>

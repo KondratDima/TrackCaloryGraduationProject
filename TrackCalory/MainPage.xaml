@@ -77,7 +77,7 @@
         <!-- Кнопка додавання -->
         <Button Grid.Row="2"
                 Text="+ Додати запис"
-                BackgroundColor="#4CAF50"
+                BackgroundColor="YellowGreen"
                 TextColor="White"
                 FontSize="18"
                 HeightRequest="60"
