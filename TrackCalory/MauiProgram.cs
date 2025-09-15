@@ -19,6 +19,20 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
-	}
+        // ========== ДОДАТИ РЕЄСТРАЦІЮ СЕРВІСІВ ==========
+
+        // Визначаємо шлях до БД
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
+
+        // Реєструємо DatabaseService з конкретним шляхом до БД
+        builder.Services.AddSingleton(s => new Services.DatabaseService(dbPath));
+
+        // Реєструємо CalorieDataService з залежністю від DatabaseService
+        builder.Services.AddSingleton<Services.CalorieDataService>();
+
+        // Для ViewModels (якщо будете використовувати DI)
+        builder.Services.AddTransient<ViewModels.MainPageViewModel>();
+
+        return builder.Build();
+    }
 }

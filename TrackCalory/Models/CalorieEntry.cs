@@ -1,21 +1,25 @@
 ﻿using System;
 using System.ComponentModel;
+using SQLite;
 
 namespace TrackCalory.Models
 {
-    // Це МОДЕЛЬ - описує, як виглядає один запис про калорії
+    // Це МОДЕЛЬ ТАБЛИЦЯ - описує, як виглядає один запис про калорії
+    [Table("CalorieEntries")]
     public class CalorieEntry : INotifyPropertyChanged
     {
-        // ПОЛЯ (властивості) нашої моделі:
+        // ПОЛЯ властивості нашої моделі:
 
         private DateTime _date;
         private double _calories;
         private string _description;
 
-        // ID запису (унікальний номер)
+        // ID запису 
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        // Дата, коли з'їли їжу
+        // Дата, коли зїли їжу
+        [NotNull]
         public DateTime Date
         {
             get => _date;
@@ -27,26 +31,40 @@ namespace TrackCalory.Models
         }
 
         // Кількість калорій
+        [NotNull]
         public double Calories
         {
             get => _calories;
             set
             {
                 _calories = value;
-                OnPropertyChanged(); // Повідомляємо інтерфейс про зміну
+                OnPropertyChanged(); 
             }
         }
 
         // Опис страви (наприклад: "Омлет з овочами")
+        [MaxLength(500)]
         public string Description
         {
             get => _description;
             set
             {
                 _description = value;
-                OnPropertyChanged(); // Повідомляємо інтерфейс про зміну
+                OnPropertyChanged(); 
             }
         }
+
+        [MaxLength(100)] // катигорія та БЖУ
+        public string Category { get; set; } = "Основна страва";
+
+        public double? Protein { get; set; }
+        public double? Fat { get; set; }
+        public double? Carbs { get; set; }
+
+        [Indexed] // індекс для швидшого пошуку
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public DateTime? UpdatedAt { get; set; }
 
         // Це потрібно для того, щоб інтерфейс автоматично оновлювався
         // коли змінюються дані

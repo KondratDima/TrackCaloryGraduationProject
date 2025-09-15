@@ -6,42 +6,115 @@ namespace TrackCalory.Services
 {
     public class CalorieDataService
     {
-        private static CalorieDataService _instance;
+        private readonly DatabaseService _databaseService;
         private ObservableCollection<CalorieEntry> _entries;
 
-        public static CalorieDataService Instance => _instance ??= new CalorieDataService();
-
-        private CalorieDataService()
+        public CalorieDataService(DatabaseService databaseService)
         {
+            _databaseService = databaseService;
             _entries = new ObservableCollection<CalorieEntry>();
-            LoadSampleData(); // Тимчасові дані для тестування
+
+            // Завантажуємо дані з БД при створенні сервісу
+            _ = LoadEntriesFromDatabaseAsync();
         }
 
         public ObservableCollection<CalorieEntry> GetEntries() => _entries;
 
-        public void AddEntry(CalorieEntry entry)
+        // Завантажити записи з БД в ObservableCollection
+        public async Task LoadEntriesFromDatabaseAsync()
         {
-            entry.Id = _entries.Count + 1;
-            _entries.Insert(0, entry); // Додаємо на початок (новіші записи зверху)
+            try
+            {
+                var entries = await _databaseService.GetEntriesAsync();
+
+                _entries.Clear();
+                foreach (var entry in entries)
+                {
+                    _entries.Add(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка завантаження даних: {ex.Message}");
+            }
         }
 
-        public void RemoveEntry(CalorieEntry entry)
+        public async Task AddEntryAsync(CalorieEntry entry)
         {
-            _entries.Remove(entry);
+            try
+            {
+                // Зберігаємо в БД
+                await _databaseService.SaveEntryAsync(entry);
+
+                // Додаємо до колекції на початок (новіші записи зверху)
+                _entries.Insert(0, entry);
+
+                System.Diagnostics.Debug.WriteLine($" Запис додано: {entry.Description}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка додавання запису: {ex.Message}");
+                throw;
+            }
         }
 
-        public double GetTotalCaloriesForDate(DateTime date)
+        // Видалити запис
+        public async Task RemoveEntryAsync(CalorieEntry entry)
         {
-            return _entries.Where(e => e.Date.Date == date.Date).Sum(e => e.Calories);
+            try
+            {
+                await _databaseService.DeleteEntryAsync(entry);
+                _entries.Remove(entry);
+
+                System.Diagnostics.Debug.WriteLine($" Запис видалено: {entry.Description}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка видалення запису: {ex.Message}");
+                throw;
+            }
         }
 
+        // Калорії за сьогодні (через БД)
+        public async Task<double> GetTotalCaloriesForDateAsync(DateTime date)
+        {
+            try
+            {
+                return await _databaseService.GetTotalCaloriesForDateAsync(date);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка отримання калорій: {ex.Message}");
+                return 0;
+            }
+        }
+
+        // Статистика за тиждень
+        public async Task<Dictionary<DateTime, double>> GetWeeklyStatisticsAsync()
+        {
+            try
+            {
+                return await _databaseService.GetWeeklyStatisticsAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка отримання статистики: {ex.Message}");
+                return new Dictionary<DateTime, double>();
+            }
+        }
+
+        // Старий код 
+
+        /*
         public Dictionary<DateTime, double> GetDailySummary()
         {
             return _entries
                 .GroupBy(e => e.Date.Date)
                 .ToDictionary(g => g.Key, g => g.Sum(e => e.Calories));
         }
+        */
 
+        /*
         private void LoadSampleData()
         {
             // Тимчасові дані для демонстрації
@@ -67,5 +140,6 @@ namespace TrackCalory.Services
                 Description = "Вечеря - салат з тунцем"
             });
         }
+        */
     }
 }

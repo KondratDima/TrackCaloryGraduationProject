@@ -15,14 +15,51 @@ namespace TrackCalory.ViewModels
 
         public MainPageViewModel()
         {
-            _dataService = CalorieDataService.Instance;
-            Entries = _dataService.GetEntries();
-            AddEntryCommand = new Command(async () => await AddEntry()); // {Command відкриття AddEntryPage з постійним оновленням}
-
-            RefreshData();
+            // ТИМЧАСОВЕ РІШЕННЯ: отримуємо сервіс через ServiceLocator
+            // (краще використовувати Dependency Injection, але це простіше для початку)
+            InitializeServices();
         }
 
-        public ObservableCollection<CalorieEntry> Entries { get; }
+        // Конструктор з Dependency Injection (для майбутнього використання) . Знайшов такий метод але не розумію як його використати
+        /*
+        public MainPageViewModel(CalorieDataService dataService)
+        {
+            _dataService = dataService;
+            Entries = _dataService.GetEntries();
+            AddEntryCommand = new Command(async () => await AddEntry());
+            RefreshCommand = new Command(async () => await RefreshDataAsync());
+
+            // Асинхронно завантажуємо дані
+            _ = RefreshDataAsync();
+        }
+        */
+
+        // Ініціалізація сервісів (тимчасове рішення)
+        private void InitializeServices()
+        {
+            try
+            {
+                // Отримуємо DatabaseService
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
+                var databaseService = new DatabaseService(dbPath);
+
+                // Створюємо CalorieDataService
+                _dataService = new CalorieDataService(databaseService);
+
+                Entries = _dataService.GetEntries();
+                AddEntryCommand = new Command(async () => await AddEntry());
+                RefreshCommand = new Command(async () => await RefreshDataAsync());
+
+                // Асинхронно завантажуємо дані
+                _ = RefreshDataAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка ініціалізації сервісів: {ex.Message}");
+            }
+        }
+
+        public ObservableCollection<CalorieEntry> Entries { get; private set; }
 
         public double TodayTotal
         {
@@ -31,20 +68,69 @@ namespace TrackCalory.ViewModels
             {
                 _todayTotal = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TodayTotalFormatted));
             }
         }
 
-        public ICommand AddEntryCommand { get; } // {Command відкриття AddEntryPage}
+        // Форматований текст для відображення
+        public string TodayTotalFormatted => $"Сьогодні: {TodayTotal:F0} ккал";
+
+        public ICommand AddEntryCommand { get; private set; }
+        public ICommand RefreshCommand { get; private set; }
+
         private async Task AddEntry()
         {
-            // Переходимо на сторінку додавання нового запису
-            //await Shell.Current.GoToAsync("//AddEntryPage"); // Другий спосіб (Shell Navigation)
-            await Application.Current.MainPage.Navigation.PushAsync(new Views.AddEntryPage());
+            try
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new Views.AddEntryPage());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка навігації: {ex.Message}");
+            }
         }
 
+        // ОНОВЛЕНИЙ метод для асинхронного оновлення даних
+        public async Task RefreshDataAsync()
+        {
+            try
+            {
+                if (_dataService == null) return;
+
+                // Перезавантажуємо дані з БД
+                await _dataService.LoadEntriesFromDatabaseAsync();
+
+                // Оновлюємо загальну кількість калорій за сьогодні
+                TodayTotal = await _dataService.GetTotalCaloriesForDateAsync(DateTime.Today);
+
+                System.Diagnostics.Debug.WriteLine($" Дані оновлено. Калорій за сьогодні: {TodayTotal}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка оновлення даних: {ex.Message}");
+                TodayTotal = 0;
+            }
+        }
+
+        /* ЗАСТАРІЛИЙ синхронний метод (для сумісності)
         public void RefreshData()
         {
-            TodayTotal = _dataService.GetTotalCaloriesForDate(DateTime.Today);
+            _ = RefreshDataAsync();
+        }
+        */
+
+        // Метод для видалення запису (для майбутнього використання)
+        public async Task DeleteEntryAsync(CalorieEntry entry)
+        {
+            try
+            {
+                await _dataService.RemoveEntryAsync(entry);
+                await RefreshDataAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка видалення запису: {ex.Message}");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

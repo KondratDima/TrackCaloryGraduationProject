@@ -30,14 +30,17 @@ public partial class AddEntryPage : ContentPage
 
             var entry = new CalorieEntry
             {
-                Description = DescriptionEntry.Text,
+                Description = DescriptionEntry.Text.Trim(),
                 Calories = calories,
-                Date = DatePicker.Date
+                Date = DatePicker.Date,
+                Category = "Основна страва"
             };
 
-            CalorieDataService.Instance.AddEntry(entry);
-            DescriptionEntry.Text = "";
-            CaloriesEntry.Text = "";
+            // Отримуємо сервіс даних та зберігаємо запис В БД
+            var dataService = Handler.MauiContext.Services.GetService<CalorieDataService>();
+            await dataService.AddEntryAsync(entry);
+
+            await DisplayAlert("Успіх! ",$"Запис збережено:\n{entry.Description}\n{entry.Calories:F0} ккал", "Добре");
 
             await Navigation.PopAsync();
         }

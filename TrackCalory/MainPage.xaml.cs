@@ -10,13 +10,13 @@ namespace TrackCalory
             InitializeComponent();
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // Оновлюємо дані при поверненні на головну сторінку
+            // Асинхронно оновлюємо дані при поверненні на головну сторінку
             if (BindingContext is MainPageViewModel viewModel)
             {
-                viewModel.RefreshData();
+                await viewModel.RefreshDataAsync();
             }
         }
     }
