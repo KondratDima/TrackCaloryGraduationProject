@@ -42,10 +42,13 @@
                            CornerRadius="10" 
                            Padding="15" 
                            Margin="10,5" 
-                           BackgroundColor="White">
+                           BackgroundColor="White"
+                           >
                         <Frame.GestureRecognizers>
+                            <!-- передаємо конкретний запис як параметр -->
                             <TapGestureRecognizer 
-                                Command="{Binding DetailCommand}"/>
+                                Command="{Binding Source={x:Reference ViewModel}, Path=DetailCommand}"
+                                CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
                         <Grid Padding="15,10" BackgroundColor="White">
                         <Grid.ColumnDefinitions>

@@ -1,54 +1,70 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
 using System.Windows.Input;
+using Microsoft.Maui.Controls;
 using TrackCalory.Models;
 using TrackCalory.Services;
 
 namespace TrackCalory.ViewModels
 {
-    [QueryProperty(nameof(Entry), "Entry")]
     public class EntryDetailViewModel : INotifyPropertyChanged
     {
-        private CalorieEntry _entry;
-        private readonly DatabaseService _dataService;
+        private readonly CalorieEntry _entry;
+        private readonly CalorieDataService _dataService;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public CalorieEntry Entry
+        public EntryDetailViewModel(CalorieEntry entry, CalorieDataService dataService)
         {
-            get => _entry;
-            set
-            {
-                _entry = value;
-                OnPropertyChanged();
-            }
+            _entry = entry;
+            _dataService = dataService;
+
+            DeleteEntryCommand = new Command(async () => await DeleteEntry());
         }
+
+        public CalorieEntry Entry => _entry;
 
         public ICommand DeleteEntryCommand { get; }
 
-        public EntryDetailViewModel(DatabaseService dataService)
+        private async Task DeleteEntry()
         {
-            _dataService = dataService;
-            DeleteEntryCommand = new Command(async () => await DeleteEntryAsync());
-        }
-
-        private async Task DeleteEntryAsync()
-        {
-            if (Entry == null) return;
-
             try
             {
-                await _dataService.DeleteEntryAsync(Entry);
-                await Shell.Current.GoToAsync("..");
+                // Показуємо підтвердження
+                var result = await Application.Current.MainPage.DisplayAlert(
+                    "⚠️ Підтвердження",
+                    $"Ви впевнені, що хочете видалити запис:\n\n" +
+                    $"«{Entry.Description}»\n" +
+                    $"{Entry.Calories:F0} ккал\n\n" +
+                    $"Цю дію неможливо скасувати!",
+                    "🗑️ Видалити",
+                    "❌ Скасувати");
+
+                if (!result) return;
+
+                // Видаляємо запис з БД та колекції
+                await _dataService.RemoveEntryAsync(Entry);
+
+                // Показуємо повідомлення про успіх
+                await Application.Current.MainPage.DisplayAlert(
+                    "✅ Успіх!",
+                    "Запис успішно видалено",
+                    "OK");
+
+                // Повертаємося на головну сторінку
+                await Application.Current.MainPage.Navigation.PopAsync();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"������� ��������� ������: {ex.Message}");
-                await Shell.Current.DisplayAlert("�������", "�� ������� �������� �����.", "OK");
+                await Application.Current.MainPage.DisplayAlert(
+                    "❌ Помилка",
+                    $"Не вдалося видалити запис:\n{ex.Message}",
+                    "OK");
             }
         }
 
-        public void OnPropertyChanged([CallerMemberName] string name = "") =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

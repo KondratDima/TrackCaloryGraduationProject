@@ -1,6 +1,8 @@
 ﻿using System;
 using TrackCalory.Models;
 using TrackCalory.Services;
+using TrackCalory.ViewModels;
+using TrackCalory.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -15,8 +17,6 @@ namespace TrackCalory.ViewModels
 
         public MainPageViewModel()
         {
-            // ТИМЧАСОВЕ РІШЕННЯ: отримуємо сервіс через ServiceLocator
-            // (краще використовувати Dependency Injection, але це простіше для початку)
             InitializeServices();
         }
 
@@ -48,7 +48,7 @@ namespace TrackCalory.ViewModels
 
                 Entries = _dataService.GetEntries();
                 AddEntryCommand = new Command(async () => await AddEntry()); // визов сторінки додавання 
-                DetailCommand = new Command(async () => await Detail()); // визов сторінки деталей 
+                DetailCommand = new Command<CalorieEntry>(async (entry) => await OpenEntryDetails(entry)); // визов сторінки деталей з зазначеним параметром з бази данних
                 RefreshCommand = new Command(async () => await RefreshDataAsync());
 
                 // Асинхронно завантажуємо дані
@@ -92,15 +92,22 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        private async Task Detail()
+        private async Task OpenEntryDetails(CalorieEntry entry)
         {
             try
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new Views.EntryDetailPage());
+                if (entry == null) return;
+
+                // Створюємо ViewModel для сторінки деталей з конкретним записом
+                var detailViewModel = new EntryDetailViewModel(entry, _dataService);
+
+                // Відкриваємо сторінку деталей
+                var detailPage = new Views.EntryDetailPage(detailViewModel);
+                await Application.Current.MainPage.Navigation.PushAsync(detailPage);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($" Помилка навігації: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Помилка відкриття деталей: {ex.Message}");
             }
         }
 
