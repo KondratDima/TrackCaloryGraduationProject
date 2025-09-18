@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:TrackCalory.ViewModels"
              x:Class="TrackCalory.MainPage"
-             Title="Калорії">
+             Title="Калорії"
+             BackgroundColor="LightGray">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
@@ -34,10 +35,19 @@
         <!-- Список записів -->
         <CollectionView Grid.Row="1" 
                        ItemsSource="{Binding Entries}"
-                       BackgroundColor="White">
+                       BackgroundColor="LightGray">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="15,10" BackgroundColor="White">
+                    <Frame BorderColor="LightGray" 
+                           CornerRadius="10" 
+                           Padding="15" 
+                           Margin="10,5" 
+                           BackgroundColor="White">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding DetailCommand}"/>
+                        </Frame.GestureRecognizers>
+                        <Grid Padding="15,10" BackgroundColor="White">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -70,6 +80,7 @@
                                 HeightRequest="1"
                                 Margin="0,20,0,0"/>
                     </Grid>
+                   </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

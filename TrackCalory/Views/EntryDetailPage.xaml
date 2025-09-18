@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TrackCalory.ViewModels"
+             x:DataType="viewModels:EntryDetailViewModel"
+             x:Class="TrackCalory.Views.EntryDetailPage"
+             Title="Деталі запису">
+
+    <VerticalStackLayout Spacing="10" Padding="20">
+        <Label 
+            Text="Назва страви:"
+            FontAttributes="Bold"
+            FontSize="Medium"/>
+        <Label 
+            Text="{Binding Entry.Description}"
+            FontSize="Small"/>
+
+        <Label 
+            Text="Калорії:"
+            FontAttributes="Bold"
+            FontSize="Medium"
+            Margin="0,10,0,0"/>
+        <Label 
+            Text="{Binding Entry.Calories}"
+            FontSize="Small"/>
+
+        <Label 
+            Text="Дата:"
+            FontAttributes="Bold"
+            FontSize="Medium"
+            Margin="0,10,0,0"/>
+        <Label 
+            Text="{Binding Entry.Date, StringFormat='{0:dd.MM.yyyy}'}"
+            FontSize="Small"/>
+
+        <Button
+            Text="Видалити запис"
+            Command="{Binding DeleteEntryCommand}"
+            BackgroundColor="Red"
+            TextColor="White"
+            Margin="0,20,0,0"
+            HorizontalOptions="FillAndExpand"/>
+    </VerticalStackLayout>
+
+</ContentPage>

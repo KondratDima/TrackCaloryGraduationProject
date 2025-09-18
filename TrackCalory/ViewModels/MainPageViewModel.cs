@@ -47,7 +47,8 @@ namespace TrackCalory.ViewModels
                 _dataService = new CalorieDataService(databaseService);
 
                 Entries = _dataService.GetEntries();
-                AddEntryCommand = new Command(async () => await AddEntry());
+                AddEntryCommand = new Command(async () => await AddEntry()); // визов сторінки додавання 
+                DetailCommand = new Command(async () => await Detail()); // визов сторінки деталей 
                 RefreshCommand = new Command(async () => await RefreshDataAsync());
 
                 // Асинхронно завантажуємо дані
@@ -77,12 +78,25 @@ namespace TrackCalory.ViewModels
 
         public ICommand AddEntryCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
+        public ICommand DetailCommand { get; private set; }
 
         private async Task AddEntry()
         {
             try
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new Views.AddEntryPage());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($" Помилка навігації: {ex.Message}");
+            }
+        }
+
+        private async Task Detail()
+        {
+            try
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new Views.EntryDetailPage());
             }
             catch (Exception ex)
             {

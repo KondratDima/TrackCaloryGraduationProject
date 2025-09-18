@@ -30,8 +30,11 @@ public static class MauiProgram
         // Реєструємо CalorieDataService з залежністю від DatabaseService
         builder.Services.AddSingleton<Services.CalorieDataService>();
 
-        // Для ViewModels (якщо будете використовувати DI)
+        // Для ViewModels 
         builder.Services.AddTransient<ViewModels.MainPageViewModel>();
+        builder.Services.AddTransient<ViewModels.EntryDetailViewModel>();
+
+        builder.Services.AddTransient<Views.EntryDetailPage>();
 
         return builder.Build();
     }
