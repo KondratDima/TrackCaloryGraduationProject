@@ -25,7 +25,7 @@ namespace TrackCalory.Services
             await _database.CreateTableAsync<CalorieEntry>();
 
             // Додаємо тестові дані, якщо БД пуста
-            await SeedDataIfEmptyAsync();
+            //await SeedDataIfEmptyAsync();
         }
 
         // ========== ОСНОВНІ ОПЕРАЦІЇ З БАЗОЮ ==========
@@ -123,7 +123,7 @@ namespace TrackCalory.Services
             await _database.DeleteAllAsync<CalorieEntry>();
         }
 
-        // Додати тестові дані, якщо БД пуста
+        /* Додати тестові дані, якщо БД пуста
         private async Task SeedDataIfEmptyAsync()
         {
             var count = await GetTotalEntriesCountAsync();
@@ -163,6 +163,6 @@ namespace TrackCalory.Services
                     await SaveEntryAsync(entry);
                 }
             }
-        }
+        }*/
     }
 }

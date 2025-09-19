@@ -20,20 +20,6 @@ namespace TrackCalory.ViewModels
             InitializeServices();
         }
 
-        // Конструктор з Dependency Injection (для майбутнього використання) . Знайшов такий метод але не розумію як його використати
-        /*
-        public MainPageViewModel(CalorieDataService dataService)
-        {
-            _dataService = dataService;
-            Entries = _dataService.GetEntries();
-            AddEntryCommand = new Command(async () => await AddEntry());
-            RefreshCommand = new Command(async () => await RefreshDataAsync());
-
-            // Асинхронно завантажуємо дані
-            _ = RefreshDataAsync();
-        }
-        */
-
         // Ініціалізація сервісів (тимчасове рішення)
         private void InitializeServices()
         {
@@ -133,14 +119,7 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        /* ЗАСТАРІЛИЙ синхронний метод (для сумісності)
-        public void RefreshData()
-        {
-            _ = RefreshDataAsync();
-        }
-        */
-
-        // Метод для видалення запису (для майбутнього використання)
+        // Метод для видалення запису 
         public async Task DeleteEntryAsync(CalorieEntry entry)
         {
             try
