@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:TrackCalory"
     xmlns:views="clr-namespace:TrackCalory.Views"
     Title="CalorieTracker"
-    BackgroundColor="LightSteelBlue">
+    BackgroundColor="#f4becb">
 
     <ShellContent Title="Головна"
                   ContentTemplate="{DataTemplate local:MainPage}" />

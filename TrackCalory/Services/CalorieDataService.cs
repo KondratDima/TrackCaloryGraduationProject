@@ -39,6 +39,19 @@ namespace TrackCalory.Services
             }
         }
 
+        public async Task<List<CalorieEntry>> GetEntriesByDateAsync(DateTime date)
+        {
+            try
+            {
+                return await _databaseService.GetEntriesByDateAsync(date);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Помилка отримання записів за дату: {ex.Message}");
+                return new List<CalorieEntry>();
+            }
+        }
+
         public async Task AddEntryAsync(CalorieEntry entry)
         {
             try

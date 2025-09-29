@@ -24,8 +24,6 @@ namespace TrackCalory.Services
             // Створюємо таблицю CalorieEntries автоматично
             await _database.CreateTableAsync<CalorieEntry>();
 
-            // Додаємо тестові дані, якщо БД пуста
-            //await SeedDataIfEmptyAsync();
         }
 
         // ========== ОСНОВНІ ОПЕРАЦІЇ З БАЗОЮ ==========
@@ -123,46 +121,5 @@ namespace TrackCalory.Services
             await _database.DeleteAllAsync<CalorieEntry>();
         }
 
-        /* Додати тестові дані, якщо БД пуста
-        private async Task SeedDataIfEmptyAsync()
-        {
-            var count = await GetTotalEntriesCountAsync();
-
-            if (count == 0)
-            {
-                var sampleEntries = new List<CalorieEntry>
-                {
-                    new CalorieEntry
-                    {
-                        Description = "Сніданок - вівсянка з ягодами",
-                        Calories = 350,
-                        Category = "Сніданок",
-                        Date = DateTime.Today,
-                        Protein = 12, Fat = 8, Carbs = 52
-                    },
-                    new CalorieEntry
-                    {
-                        Description = "Обід - курка з рисом",
-                        Calories = 480,
-                        Category = "Обід",
-                        Date = DateTime.Today,
-                        Protein = 35, Fat = 5, Carbs = 60
-                    },
-                    new CalorieEntry
-                    {
-                        Description = "Вечеря - салат з тунцем",
-                        Calories = 320,
-                        Category = "Вечеря",
-                        Date = DateTime.Today.AddDays(-1),
-                        Protein = 18, Fat = 24, Carbs = 15
-                    }
-                };
-
-                foreach (var entry in sampleEntries)
-                {
-                    await SaveEntryAsync(entry);
-                }
-            }
-        }*/
     }
 }

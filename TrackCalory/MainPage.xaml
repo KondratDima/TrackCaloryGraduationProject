@@ -17,86 +17,208 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок та загальна кількість калорій за сьогодні -->
-        <StackLayout Grid.Row="0" Padding="20" BackgroundColor="#E3F2FD">
-            <Label Text="Трекер калорій" 
-                   FontSize="28" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center"/>
+        <!-- Заголовок з навігацією по датах -->
+        <Frame Grid.Row="0" 
+               BackgroundColor="White"
+               HasShadow="True"
+               Padding="15">
+            <StackLayout Spacing="15">
 
-            <Label Text="{Binding TodayTotal, StringFormat='Сьогодні: {0:F0} ккал'}"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="#1976D2"
-                   Margin="0,10,0,0"/>
-        </StackLayout>
+                <!-- Основний заголовок -->
+                <Label Text="🍽️ Трекер калорій" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"
+                       TextColor="#2C3E50"/>
 
-        <!-- Список записів -->
+                <!-- Навігація по датах -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Ліва стрілка -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- Дата та калорії -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Права стрілка -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Ліва стрілка (попередній день) -->
+                    <Button Grid.Column="0"
+                            Text="←"
+                            FontSize="24"
+                            BackgroundColor="Transparent"
+                            TextColor="#3498DB"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            Command="{Binding PreviousDayCommand}"/>
+
+                    <!-- Центральна частина: дата та калорії -->
+                    <StackLayout Grid.Column="1" 
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
+
+                        <!-- Вибрана дата (клікабельна) -->
+                        <Button Text="{Binding SelectedDateFormatted}"
+                    BackgroundColor="#98f1ae"
+                    TextColor="Black"
+                    FontSize="18"
+                    HeightRequest="40"
+                    CornerRadius="30"
+                    Command="{Binding ShowDatePickerCommand}"/>
+                        
+
+                        <!-- Калорії за вибрану дату -->
+                        <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} ккал'}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="#e1607e"
+                               Margin="0,5,0,0"/>
+                    </StackLayout>
+
+                    <!-- Права стрілка (наступний день) -->
+                    <Button Grid.Column="2"
+                            Text="→"
+                            FontSize="24"
+                            BackgroundColor="Transparent"
+                            TextColor="#3498DB"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            Command="{Binding NextDayCommand}"/>
+                </Grid>
+
+                <!-- Індикатор: сьогодні/інша дата -->
+                <Label Text="{Binding DateIndicator}"
+                       FontSize="12"
+                       FontAttributes="Italic"
+                       HorizontalOptions="Center"
+                       TextColor="#27AE60"/>
+
+                <!-- Швидкі кнопки навігації -->
+                <StackLayout Orientation="Horizontal" 
+                            HorizontalOptions="Center"
+                            Spacing="10">
+                    <Button Text="Вчора"
+                            FontSize="12"
+                            BackgroundColor="#95A5A6"
+                            TextColor="White"
+                            CornerRadius="15"
+                            Padding="10,5"
+                            Command="{Binding GoToYesterdayCommand}"/>
+
+                    <Button Text="Сьогодні"
+                            FontSize="12"
+                            BackgroundColor="#27AE60"
+                            TextColor="White"
+                            CornerRadius="15"
+                            Padding="10,5"
+                            Command="{Binding GoToTodayCommand}"/>
+
+                    
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+
+        <!-- Список записів ЗА ВИБРАНУ ДАТУ -->
         <CollectionView Grid.Row="1" 
-                       ItemsSource="{Binding Entries}"
-                       BackgroundColor="LightGray">
+                       ItemsSource="{Binding FilteredEntries}"
+                       BackgroundColor="LightGray"
+                       Margin="0,5,0,0">
+            <CollectionView.EmptyView>
+                <StackLayout HorizontalOptions="Center" 
+                            VerticalOptions="Center"
+                            Padding="50">
+                    <Label Text="📭"
+                           FontSize="48"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Немає записів за цю дату"
+                           FontSize="16"
+                           FontAttributes="Italic"
+                           TextColor="Gray"
+                           HorizontalOptions="Center"/>
+                    <Label Text="{Binding SelectedDateFormatted}"
+                           FontSize="14"
+                           TextColor="Gray"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BorderColor="LightGray" 
                            CornerRadius="10" 
-                           Padding="15" 
+                           Padding="0" 
                            Margin="10,5" 
-                           BackgroundColor="White"
-                           >
+                           BackgroundColor="White">
                         <Frame.GestureRecognizers>
-                            <!-- передаємо конкретний запис як параметр -->
                             <TapGestureRecognizer 
                                 Command="{Binding Source={x:Reference ViewModel}, Path=DetailCommand}"
                                 CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
-                        <Grid Padding="15,10" BackgroundColor="White">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0"
-                               Text="{Binding Description}"
-                               FontSize="16"
-                               FontAttributes="Bold"/>
+                        <Grid Padding="15,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                        <Label Grid.Row="1" Grid.Column="0"
-                               Text="{Binding Date, StringFormat='{0:dd.MM.yyyy HH:mm}'}"
-                               FontSize="12"
-                               TextColor="Gray"/>
+                            <!-- Назва страви -->
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding Description}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"/>
 
-                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
-                               Text="{Binding Calories, StringFormat='{0:F0} ккал'}"
-                               FontSize="16"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center"
-                               TextColor="#4CAF50"/>
+                            <!-- Час прийому їжі -->
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="{Binding Date, StringFormat='⏰ {0:HH:mm}'}"
+                                   FontSize="12"
+                                   TextColor="Gray"/>
 
-                        <!-- Розділювальна лінія -->
-                        <BoxView Grid.Row="1" Grid.ColumnSpan="2"
-                                BackgroundColor="LightGray"
-                                HeightRequest="1"
-                                Margin="0,20,0,0"/>
-                    </Grid>
-                   </Frame>
+                            <!-- Категорія -->
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="{Binding Category, StringFormat='🍽️ {0}'}"
+                                   FontSize="12"
+                                   TextColor="#3498DB"
+                                   Margin="0,3,0,0"/>
+
+                            <!-- Калорії -->
+                            <StackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="3"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="End">
+                                <Label Text="{Binding Calories, StringFormat='{0:F0}'}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="#e1607e"
+                                       HorizontalOptions="End"/>
+                                <Label Text="ккал"
+                                       FontSize="12"
+                                       TextColor="#e1607e"
+                                       HorizontalOptions="End"
+                                       Margin="0,-5,0,0"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
         <!-- Кнопка додавання -->
-        <Button Grid.Row="2"
-                Text="+ Додати запис"
-                BackgroundColor="YellowGreen"
-                TextColor="White"
-                FontSize="18"
-                HeightRequest="60"
-                Margin="40,10"
-                Command="{Binding AddEntryCommand}"/>
+        <Frame Grid.Row="2" 
+               BackgroundColor="Transparent"
+               Padding="20,10">
+            <Button Text="➕ Додати запис"
+                    BackgroundColor="#5fd37c"
+                    TextColor="White"
+                    FontSize="18"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    Command="{Binding AddEntryCommand}"/>
+        </Frame>
     </Grid>
 
 </ContentPage>
