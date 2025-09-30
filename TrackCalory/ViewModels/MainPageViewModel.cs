@@ -45,8 +45,6 @@ namespace TrackCalory.ViewModels
                 PreviousDayCommand = new Command(async () => await GoToPreviousDay());
                 NextDayCommand = new Command(async () => await GoToNextDay());
                 ShowDatePickerCommand = new Command(async () => await ShowDatePicker());
-                GoToTodayCommand = new Command(async () => await GoToToday());
-                GoToYesterdayCommand = new Command(async () => await GoToYesterday());
 
                 // Завантажуємо дані для поточної дати
                 _ = LoadDataForSelectedDateAsync();
@@ -90,14 +88,14 @@ namespace TrackCalory.ViewModels
         {
             get
             {
-                if (SelectedDate.Date == DateTime.Today)
+                /*if (SelectedDate.Date == DateTime.Today)
                     return "📅 Сьогодні";
                 else if (SelectedDate.Date == DateTime.Today.AddDays(-1))
                     return "📅 Вчора";
                 else if (SelectedDate.Date == DateTime.Today.AddDays(1))
                     return "📅 Завтра";
-                else
-                    return $"📅 {SelectedDate:dd.MM.yyyy}";
+                else */
+                return $"📅 {SelectedDate:dd.MM.yyyy}";
             }
         }
 
@@ -153,15 +151,6 @@ namespace TrackCalory.ViewModels
             SelectedDate = SelectedDate.AddDays(1);
         }
 
-        private async Task GoToToday()
-        {
-            SelectedDate = DateTime.Today;
-        }
-
-        private async Task GoToYesterday()
-        {
-            SelectedDate = DateTime.Today.AddDays(-1);
-        }
 
         private async Task ShowDatePicker()
         {
@@ -233,7 +222,7 @@ namespace TrackCalory.ViewModels
                             new Button
                             {
                                 Text = "❌ Скасувати",
-                                BackgroundColor = Color.FromArgb("#95A5A6"),
+                                BackgroundColor = Color.FromArgb("#a79599"),
                                 TextColor = Colors.White,
                                 FontSize = 16,
                                 CornerRadius = 10,

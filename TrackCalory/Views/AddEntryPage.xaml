@@ -9,6 +9,7 @@
             <Label Text="Додати новий запис про калорії" 
                    FontSize="24" 
                    FontAttributes="Bold"
+                   TextColor="#694f55"
                    HorizontalOptions="Center"
                    Margin="0,0,0,20"/>
 
@@ -27,14 +28,14 @@
             <DatePicker x:Name="DatePicker" FontSize="16"/>
 
             <Button Text="Зберегти"
-                    BackgroundColor="YellowGreen"
+                    BackgroundColor="#5fd37c"
                     TextColor="White"
                     FontSize="18"
                     Clicked="OnSaveClicked"
                     Margin="0,20,0,0"/>
 
             <Button Text="Скасувати"
-                    BackgroundColor="OrangeRed"
+                    BackgroundColor="#a79599"
                     TextColor="White"
                     FontSize="18"
                     Clicked="OnCancelClicked"/>

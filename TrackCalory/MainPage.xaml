@@ -4,7 +4,7 @@
              xmlns:viewmodels="clr-namespace:TrackCalory.ViewModels"
              x:Class="TrackCalory.MainPage"
              Title="Калорії"
-             BackgroundColor="LightGray">
+             BackgroundColor="#d6d1d3">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
@@ -20,16 +20,17 @@
         <!-- Заголовок з навігацією по датах -->
         <Frame Grid.Row="0" 
                BackgroundColor="White"
-               HasShadow="True"
+               BorderColor="#d2cbcd"
+               HasShadow="False"
                Padding="15">
-            <StackLayout Spacing="15">
+            <StackLayout Spacing="20">
 
                 <!-- Основний заголовок -->
                 <Label Text="🍽️ Трекер калорій" 
                        FontSize="24" 
                        FontAttributes="Bold" 
                        HorizontalOptions="Center"
-                       TextColor="#2C3E50"/>
+                       TextColor="#694f55"/>
 
                 <!-- Навігація по датах -->
                 <Grid>
@@ -47,7 +48,7 @@
                             Text="←"
                             FontSize="24"
                             BackgroundColor="Transparent"
-                            TextColor="#3498DB"
+                            TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
                             Command="{Binding PreviousDayCommand}"/>
@@ -60,7 +61,7 @@
                         <!-- Вибрана дата (клікабельна) -->
                         <Button Text="{Binding SelectedDateFormatted}"
                     BackgroundColor="#98f1ae"
-                    TextColor="Black"
+                    TextColor="#694f55"
                     FontSize="18"
                     HeightRequest="40"
                     CornerRadius="30"
@@ -81,7 +82,7 @@
                             Text="→"
                             FontSize="24"
                             BackgroundColor="Transparent"
-                            TextColor="#3498DB"
+                            TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
                             Command="{Binding NextDayCommand}"/>
@@ -93,36 +94,13 @@
                        FontAttributes="Italic"
                        HorizontalOptions="Center"
                        TextColor="#27AE60"/>
-
-                <!-- Швидкі кнопки навігації -->
-                <StackLayout Orientation="Horizontal" 
-                            HorizontalOptions="Center"
-                            Spacing="10">
-                    <Button Text="Вчора"
-                            FontSize="12"
-                            BackgroundColor="#95A5A6"
-                            TextColor="White"
-                            CornerRadius="15"
-                            Padding="10,5"
-                            Command="{Binding GoToYesterdayCommand}"/>
-
-                    <Button Text="Сьогодні"
-                            FontSize="12"
-                            BackgroundColor="#27AE60"
-                            TextColor="White"
-                            CornerRadius="15"
-                            Padding="10,5"
-                            Command="{Binding GoToTodayCommand}"/>
-
-                    
-                </StackLayout>
             </StackLayout>
         </Frame>
 
         <!-- Список записів ЗА ВИБРАНУ ДАТУ -->
         <CollectionView Grid.Row="1" 
                        ItemsSource="{Binding FilteredEntries}"
-                       BackgroundColor="LightGray"
+                       BackgroundColor="#dad7d8"
                        Margin="0,5,0,0">
             <CollectionView.EmptyView>
                 <StackLayout HorizontalOptions="Center" 
