@@ -48,6 +48,9 @@ namespace TrackCalory.ViewModels
 
                 // Завантажуємо дані для поточної дати
                 _ = LoadDataForSelectedDateAsync();
+
+                // Завантажуємо дані для добової калорійності
+                _ = LoadUserProfileAsync();
             }
             catch (Exception ex)
             {
@@ -264,12 +267,89 @@ namespace TrackCalory.ViewModels
                 // Отримуємо загальну кількість калорій за дату
                 SelectedDateCalories = await _dataService.GetTotalCaloriesForDateAsync(SelectedDate);
 
+                // Оновлюємо добову норму колорій
+                UpdateRemainingCalories();
+
                 System.Diagnostics.Debug.WriteLine($"✅ Завантажено {FilteredEntries.Count} записів за {SelectedDate:dd.MM.yyyy}. Калорій: {SelectedDateCalories}");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"❌ Помилка завантаження даних за дату: {ex.Message}");
                 SelectedDateCalories = 0;
+            }
+        }
+        // ========== ДОБОВА КОЛОРІЙНІСТЬ ==========
+        private double _dailyGoal;
+        private double _remainingCalories;
+
+        public double DailyGoal
+        {
+            get => _dailyGoal;
+            set
+            {
+                _dailyGoal = value;
+                OnPropertyChanged();
+                UpdateRemainingCalories();
+            }
+        }
+
+        public double RemainingCalories
+        {
+            get => _remainingCalories;
+            set
+            {
+                _remainingCalories = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(RemainingCaloriesFormatted));
+                OnPropertyChanged(nameof(ProgressPercentage));
+            }
+        }
+
+        // Повертає str який пише скільки залишилося набрати колорій за день та чи перевищено
+        // ПОКИ НЕ ВИКОРИСТОВУЄТЬСЯ
+        public string RemainingCaloriesFormatted
+        {
+            get
+            {
+                if (RemainingCalories > 0)
+                    return $"Залишилось: {RemainingCalories:F0} ккал";
+                else if (RemainingCalories == 0)
+                    return "Норма досягнута! 🎯";
+                else
+                    return $"Перевищено на {Math.Abs(RemainingCalories):F0} ккал ⚠️";
+            }
+        }
+
+        public double ProgressPercentage
+        {
+            get
+            {
+                if (DailyGoal == 0) return 0;
+                return (SelectedDateCalories / DailyGoal);
+            }
+        }
+
+        private void UpdateRemainingCalories()
+        {
+            RemainingCalories = DailyGoal - SelectedDateCalories;
+        }
+
+        private async Task LoadUserProfileAsync()
+        {
+            try
+            {
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
+                var databaseService = new DatabaseService(dbPath);
+
+                var profile = await databaseService.GetUserProfileAsync();
+                if (profile != null)
+                {
+                    DailyGoal = profile.DailyCalorieGoal;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Помилка завантаження профілю: {ex.Message}");
             }
         }
 

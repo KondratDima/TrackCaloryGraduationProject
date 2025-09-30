@@ -24,6 +24,10 @@ namespace TrackCalory.Services
             // Ñòâîğşºìî òàáëèöş CalorieEntries àâòîìàòè÷íî
             await _database.CreateTableAsync<CalorieEntry>();
 
+            await _database.CreateTableAsync<UserProfile>();
+
+            //await SeedDataIfEmptyAsync();
+
         }
 
         // ========== ÎÑÍÎÂÍ² ÎÏÅĞÀÖ²¯ Ç ÁÀÇÎŞ ==========
@@ -104,6 +108,39 @@ namespace TrackCalory.Services
 
             return entries.GroupBy(x => x.Date.Date)
                          .ToDictionary(g => g.Key, g => g.Sum(x => x.Calories));
+        }
+        // ========== ÌÅÒÎÄÈ ÄËß ĞÎÁÎÒÈ Ç ÏĞÎÔ²ËÅÌ ÊÎĞÈÑÒÓÂÀ×À ==========
+
+        public async Task<UserProfile> GetUserProfileAsync()
+        {
+            await InitAsync();
+            return await _database.Table<UserProfile>().FirstOrDefaultAsync();
+        }
+
+        public async Task<int> SaveUserProfileAsync(UserProfile profile)
+        {
+            await InitAsync();
+
+            profile.UpdatedAt = DateTime.Now;
+
+            var existing = await GetUserProfileAsync();
+            if (existing != null)
+            {
+                profile.Id = existing.Id;
+                return await _database.UpdateAsync(profile);
+            }
+            else
+            {
+                profile.CreatedAt = DateTime.Now;
+                return await _database.InsertAsync(profile);
+            }
+        }
+
+        public async Task<bool> HasUserProfileAsync()
+        {
+            await InitAsync();
+            var count = await _database.Table<UserProfile>().CountAsync();
+            return count > 0;
         }
 
         // ========== ÄÎÏÎÌ²ÆÍ² ÌÅÒÎÄÈ ==========

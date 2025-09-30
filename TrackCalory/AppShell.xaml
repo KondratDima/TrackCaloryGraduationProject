@@ -17,5 +17,8 @@
     <ShellContent Title="Додати"
                   ContentTemplate="{DataTemplate views:AddEntryPage}"
                   Route="AddEntryPage" />
+    <ShellContent Title="Налаштування"
+                  ContentTemplate="{DataTemplate views:UserProfileSetupPage}"
+                  Route="UserProfileSetupPage"/>
     
 </Shell>

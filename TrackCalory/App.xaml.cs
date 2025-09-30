@@ -8,6 +8,8 @@ public partial class App : Application
 
 		MainPage = new AppShell();
 
+        CheckUserProfile();
+
 #if WINDOWS
         // Без застарілих методів
         Dispatcher.Dispatch(async () =>
@@ -20,5 +22,44 @@ public partial class App : Application
             }
         });
 #endif
+    }
+    private async void CheckUserProfile()
+    {
+        try
+        {
+            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
+            var databaseService = new Services.DatabaseService(dbPath);
+
+            var hasProfile = await databaseService.HasUserProfileAsync();
+
+            if (!hasProfile)
+            {
+
+                // Створюємо сторінку налаштування профілю
+                var setupPage = new Views.UserProfileSetupPage(databaseService);
+                // Створюємо NavigationPage, використовуючи створену сторінку
+                var navigationPage = new NavigationPage(setupPage);
+                // Встановлюємо рожевий колір для панелі навігації (заголовка)
+                navigationPage.BarBackgroundColor = Color.FromArgb("#f4becb");
+                // За бажанням, можна встановити колір тексту заголовка (наприклад, білий)
+                navigationPage.BarTextColor = Colors.White;
+                MainPage = navigationPage;
+
+                /*
+                // Якщо профілю немає - показуємо форму налаштування
+                MainPage = new NavigationPage(new Views.UserProfileSetupPage(databaseService));
+                */
+            }
+            else
+            {
+                // Якщо профіль є - показуємо головну сторінку
+                MainPage = new AppShell();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Помилка перевірки профілю: {ex.Message}");
+            MainPage = new AppShell();
+        }
     }
 }
