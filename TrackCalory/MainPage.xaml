@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:TrackCalory.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="TrackCalory.MainPage"
              Title="Калорії"
              BackgroundColor="#d6d1d3">
@@ -9,6 +10,12 @@
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
     </ContentPage.BindingContext>
+    
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior 
+            StatusBarColor="#f4becb"     
+            StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -27,7 +34,7 @@
 
                 <!-- Основний заголовок -->
                 <Label Text="🍽️ Трекер калорій" 
-                       FontSize="24" 
+                       FontSize="22" 
                        FontAttributes="Bold" 
                        HorizontalOptions="Center"
                        TextColor="#694f55"/>
@@ -70,14 +77,14 @@
 
                         <!-- Калорії за вибрану дату -->
                         <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} ккал'}"
-                               FontSize="20"
+                               FontSize="22"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
                                TextColor="#e1607e"
                                Margin="0,5,0,0"/>
                         <!-- Денна норма та прогрес -->
                         <Label Text="{Binding DailyGoal, StringFormat='🎯 Денна норма: {0:F0} ккал'}"
-                              FontSize="14"
+                              FontSize="12"
                                FontAttributes="Bold"
                               HorizontalOptions="Center"
                               TextColor="#7F8C8D"/>
@@ -86,7 +93,7 @@
                               FontSize="11"
                               HorizontalOptions="Center"
                               TextColor="#dad7d8"
-                              Margin="0,10,0,-5"/>
+                              Margin="0,15,0,-5"/>
                         
                         <!-- Прогрес бар -->
                         <ProgressBar Progress="{Binding ProgressPercentage}"
@@ -114,7 +121,7 @@
                        FontAttributes="Italic"
                        HorizontalOptions="Center"
                        TextColor="#27AE60"
-                       Margin="0,10,0,0"/>
+                       Margin="0,0,0,0"/>
             </StackLayout>
         </Frame>
 

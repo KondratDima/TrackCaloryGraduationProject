@@ -8,7 +8,9 @@
     Title="CalorieTracker"
     BackgroundColor="#f4becb"
     DisabledColor="#d2cbcd"
-    UnselectedColor="#d2cbcd">
+    UnselectedColor="#d2cbcd"
+    TabBarForegroundColor="#f4becb"
+    TabBarTitleColor="Black">
 
     <ShellContent Title="Головна"
                   ContentTemplate="{DataTemplate local:MainPage}"

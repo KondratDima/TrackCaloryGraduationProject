@@ -1,4 +1,7 @@
-﻿namespace TrackCalory;
+﻿using CommunityToolkit.Maui.Core.Platform;
+using CommunityToolkit.Maui.Core;
+
+namespace TrackCalory;
 
 public partial class App : Application
 {
@@ -22,6 +25,8 @@ public partial class App : Application
             }
         });
 #endif
+
+        
     }
     private async void CheckUserProfile()
     {
@@ -62,4 +67,5 @@ public partial class App : Application
             MainPage = new AppShell();
         }
     }
+    
 }
