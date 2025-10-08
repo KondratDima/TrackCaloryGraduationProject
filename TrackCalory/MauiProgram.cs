@@ -48,6 +48,8 @@ public static class MauiProgram
         builder.Services.AddTransient<Views.UserProfileSetupPage>();
         builder.Services.AddSingleton<Services.CalorieCalculationService>();
 
+        // Для фото 
+        builder.Services.AddSingleton<Services.PhotoService>();
         return builder.Build();
     }
 }

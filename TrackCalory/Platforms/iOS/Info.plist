@@ -28,5 +28,15 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+
+	<!-- Дозволи для камери та фото -->
+	<key>NSCameraUsageDescription</key>
+	<string>Потрібен доступ до камери для фотографування їжі</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Потрібен доступ до галереї для вибору фото їжі</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Потрібен доступ для збереження фото</string>
 </dict>
 </plist>

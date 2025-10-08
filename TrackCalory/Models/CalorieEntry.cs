@@ -13,6 +13,7 @@ namespace TrackCalory.Models
         private DateTime _date;
         private double _calories;
         private string _description;
+        private string _photoPath;
 
         // ID запису 
         [PrimaryKey, AutoIncrement]
@@ -56,14 +57,30 @@ namespace TrackCalory.Models
 
         [MaxLength(100)] // катигорія та БЖУ
         public string Category { get; set; } = "Основна страва";
-
         public double? Protein { get; set; }
         public double? Fat { get; set; }
         public double? Carbs { get; set; }
 
+        //Шлях до фото
+        [MaxLength(500)]
+        public string PhotoPath
+        {
+            get => _photoPath;
+            set
+            {
+                _photoPath = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasPhoto));
+            }
+        }
+
+        // Допоміжна властивість для перевірки наявності фото
+        [Ignore]
+        public bool HasPhoto => !string.IsNullOrEmpty(PhotoPath) && File.Exists(PhotoPath);
+
+
         [Indexed] // індекс для швидшого пошуку
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
         public DateTime? UpdatedAt { get; set; }
 
         // Це потрібно для того, щоб інтерфейс автоматично оновлювався

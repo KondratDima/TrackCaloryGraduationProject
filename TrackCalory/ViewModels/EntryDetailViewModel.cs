@@ -10,11 +10,15 @@ namespace TrackCalory.ViewModels
     {
         private readonly CalorieEntry _entry;
         private readonly CalorieDataService _dataService;
+        private readonly PhotoService _photoService;
 
         public EntryDetailViewModel(CalorieEntry entry, CalorieDataService dataService)
         {
             _entry = entry;
             _dataService = dataService;
+
+            // Отримуємо PhotoService для видалення фото
+            _photoService = App.Current.Handler.MauiContext.Services.GetService<PhotoService>();
 
             DeleteEntryCommand = new Command(async () => await DeleteEntry());
         }
@@ -38,6 +42,12 @@ namespace TrackCalory.ViewModels
                     "❌ Скасувати");
 
                 if (!result) return;
+
+                // Видаляємо фото, якщо воно є
+                if (!string.IsNullOrEmpty(Entry.PhotoPath))
+                {
+                    _photoService?.DeletePhoto(Entry.PhotoPath);
+                }
 
                 // Видаляємо запис з БД та колекції
                 await _dataService.RemoveEntryAsync(Entry);

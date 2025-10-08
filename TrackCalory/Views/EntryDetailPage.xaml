@@ -4,42 +4,131 @@
              xmlns:viewModels="clr-namespace:TrackCalory.ViewModels"
              x:DataType="viewModels:EntryDetailViewModel"
              x:Class="TrackCalory.Views.EntryDetailPage"
-             Title="Деталі запису">
+             Title="Деталі запису"
+             BackgroundColor="#f0eaed">
 
-    <VerticalStackLayout Spacing="10" Padding="20">
-        <Label 
-            Text="Назва страви:"
-            FontAttributes="Bold"
-            FontSize="Medium"/>
-        <Label 
-            Text="{Binding Entry.Description}"
-            FontSize="Small"/>
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
 
-        <Label 
-            Text="Калорії:"
-            FontAttributes="Bold"
-            FontSize="Medium"
-            Margin="0,10,0,0"/>
-        <Label 
-            Text="{Binding Entry.Calories}"
-            FontSize="Small"/>
+            <!-- ВЕЛИКЕ ФОТО СТРАВИ -->
+            <Frame IsVisible="{Binding Entry.HasPhoto}"
+                   CornerRadius="15"
+                   Padding="0"
+                   HasShadow="True"
+                   HeightRequest="300"
+                   Margin="0,0,0,20">
+                <Image Source="{Binding Entry.PhotoPath}"
+                       Aspect="AspectFill"
+                       HeightRequest="300"/>
+            </Frame>
 
-        <Label 
-            Text="Дата:"
-            FontAttributes="Bold"
-            FontSize="Medium"
-            Margin="0,10,0,0"/>
-        <Label 
-            Text="{Binding Entry.Date, StringFormat='{0:dd.MM.yyyy}'}"
-            FontSize="Small"/>
+            <!-- Назва страви -->
+            <Frame BackgroundColor="White" HasShadow="False" CornerRadius="10" Padding="15">
+                <StackLayout Spacing="5">
+                    <Label Text="🍽️ Назва страви"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="Gray"/>
+                    <Label Text="{Binding Entry.Description}"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                </StackLayout>
+            </Frame>
 
-        <Button
-            Text="Видалити запис"
-            Command="{Binding DeleteEntryCommand}"
-            BackgroundColor="Red"
-            TextColor="White"
-            Margin="0,20,0,0"
-            HorizontalOptions="FillAndExpand"/>
-    </VerticalStackLayout>
+            <!-- Калорії -->
+            <Frame BackgroundColor="White" HasShadow="False" CornerRadius="10" Padding="15">
+                <StackLayout Spacing="5">
+                    <Label Text="🔥 Калорії"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="Gray"/>
+                    <Label FontSize="22" FontAttributes="Bold" TextColor="#e1607e">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding Entry.Calories, StringFormat='{0:F0}'}"/>
+                                <Span Text=" ккал"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </StackLayout>
+            </Frame>
+
+            <!-- Категорія -->
+            <Frame BackgroundColor="White" HasShadow="False" CornerRadius="10" Padding="15">
+                <StackLayout Spacing="5">
+                    <Label Text="📂 Категорія"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="Gray"/>
+                    <Label Text="{Binding Entry.Category}"
+                           FontSize="16"
+                           TextColor="#3498DB"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- БЖУ (якщо є) -->
+            <Frame IsVisible="{Binding Entry.Protein}"
+                   BackgroundColor="White" 
+                   HasShadow="False" 
+                   CornerRadius="10" 
+                   Padding="15">
+                <StackLayout Spacing="10">
+                    <Label Text="🔬 Білки, жири, вуглеводи"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="Gray"/>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <StackLayout Grid.Column="0">
+                            <Label Text="Білки" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Entry.Protein, StringFormat='{0:F1} г'}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+
+                        <StackLayout Grid.Column="1">
+                            <Label Text="Жири" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Entry.Fat, StringFormat='{0:F1} г'}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+
+                        <StackLayout Grid.Column="2">
+                            <Label Text="Вуглев." FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Entry.Carbs, StringFormat='{0:F1} г'}" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Дата та час -->
+            <Frame BackgroundColor="White" HasShadow="False" CornerRadius="10" Padding="15">
+                <StackLayout Spacing="5">
+                    <Label Text="📅 Дата та час"
+                           FontAttributes="Bold"
+                           FontSize="14"
+                           TextColor="Gray"/>
+                    <Label Text="{Binding Entry.Date, StringFormat='{0:dd MMMM yyyy, HH:mm}'}"
+                           FontSize="16"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Кнопка видалення -->
+            <Button Text="🗑️ Видалити запис"
+                    Command="{Binding DeleteEntryCommand}"
+                    BackgroundColor="#e1607e"
+                    TextColor="White"
+                    FontSize="16"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Margin="0,20,0,0"
+                    HorizontalOptions="FillAndExpand"/>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>
