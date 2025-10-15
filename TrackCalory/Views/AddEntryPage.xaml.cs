@@ -9,6 +9,7 @@ public partial class AddEntryPage : ContentPage
     private readonly PhotoService _photoService;
     private readonly CalorieDataService _dataService;
     private string _currentPhotoPath;
+    private readonly GeminiVisionService _geminiService;
 
 
     public AddEntryPage()
@@ -22,6 +23,8 @@ public partial class AddEntryPage : ContentPage
         var databaseService = new DatabaseService(dbPath);
         _dataService = new CalorieDataService(databaseService);
 
+        _geminiService = App.Current.Handler.MauiContext.Services.GetService<GeminiVisionService>();
+
         DatePicker.Date = DateTime.Today;
         Category.SelectedIndex = 0; // За замовчуванням "Сніданок"
     }
@@ -33,39 +36,6 @@ public partial class AddEntryPage : ContentPage
     {
         try
         {
-            /*if (string.IsNullOrWhiteSpace(DescriptionEntry.Text))
-            {
-                await DisplayAlert("Помилка", "Будь ласка, введіть опис страви", "OK");
-                return;
-            }
-
-            if (!double.TryParse(CaloriesEntry.Text, out double calories) || calories <= 0)
-            {
-                await DisplayAlert("Помилка", "Будь ласка, введіть правильну кількість калорій", "OK");
-                return;
-            }
-            if (Category.SelectedIndex == -1)
-            {
-                await DisplayAlert("Помилка", "Оберіть тип", "OK");
-                return;
-            }
-
-            var entry = new CalorieEntry
-            {
-                Description = DescriptionEntry.Text.Trim(),
-                Calories = calories,
-                Date = DatePicker.Date,
-                Category = Category.SelectedIndex switch
-                {
-                    0 => "Сніданок",
-                    1 => "Обід",
-                    2 => "Вечеря",
-                    3 => "Перекус",
-                    4 => "Десерт",
-                    5 => "Напій",
-                    6 => "Інше"
-                }
-            };*/
             // Валідація
             if (string.IsNullOrWhiteSpace(DescriptionEntry.Text))
             {
@@ -113,6 +83,254 @@ public partial class AddEntryPage : ContentPage
         catch (Exception ex)
         {
             await DisplayAlert("Помилка", $"Не вдалося зберегти запис: {ex.Message}", "OK");
+        }
+    }
+
+    /// <summary>
+    /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ 
+    /// </summary>
+    private async void OnAnalyzePhotoClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            // КРОК 1: Запитуємо звідки взяти фото
+            string action = await DisplayActionSheet(
+                "🤖 Розпізнати калорії з AI",
+                "Скасувати",
+                null,
+                "📷 Зробити фото зараз",
+                "🖼️ Вибрати з галереї",
+                _currentPhotoPath != null ? "✅ Використати поточне фото" : null);
+
+            if (action == "Скасувати" || action == null)
+                return;
+
+            string photoPathToAnalyze = null;
+
+            // КРОК 2:Отримуємо фото відповідно до вибору
+            if (action == "📷 Зробити фото зараз")
+            {
+                // Перевірка дозволу на камеру
+                var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                    if (cameraStatus != PermissionStatus.Granted)
+                    {
+                        await DisplayAlert("❌ Доступ заборонено",
+                            "Для камери потрібен дозвіл у налаштуваннях", "OK");
+                        return;
+                    }
+                }
+
+                var photo = await MediaPicker.Default.CapturePhotoAsync();
+                if (photo != null)
+                {
+                    photoPathToAnalyze = await SavePhotoAsync(photo);
+                    await DisplayPhotoPreview(photoPathToAnalyze);
+                }
+            }
+            else if (action == "🖼️ Вибрати з галереї")
+            {
+                // Перевірка дозволу на галерею
+                var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
+                if (photoStatus != PermissionStatus.Granted)
+                {
+                    photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
+                    if (photoStatus != PermissionStatus.Granted)
+                    {
+                        await DisplayAlert("❌ Доступ заборонено",
+                            "Для галереї потрібен дозвіл у налаштуваннях", "OK");
+                        return;
+                    }
+                }
+
+                var photo = await MediaPicker.Default.PickPhotoAsync();
+                if (photo != null)
+                {
+                    photoPathToAnalyze = await SavePhotoAsync(photo);
+                    await DisplayPhotoPreview(photoPathToAnalyze);
+                }
+            }
+            else if (action == "✅ Використати поточне фото")
+            {
+                // Використовуємо вже завантажене фото
+                photoPathToAnalyze = _currentPhotoPath;
+            }
+
+            // КРОК 3: Перевірка наявності фото
+            if (string.IsNullOrEmpty(photoPathToAnalyze))
+            {
+                await DisplayAlert("⚠️ Помилка", "Не вдалося отримати фото для аналізу", "OK");
+                return;
+            }
+
+            // КРОК 4: Показуємо індикатор завантаження
+            var loadingPopup = new ContentPage
+            {
+                BackgroundColor = Color.FromRgba(0, 0, 0, 0.7),
+                Content = new VerticalStackLayout
+                {
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Spacing = 20,
+                    Children =
+                {
+                    new ActivityIndicator
+                    {
+                        IsRunning = true,
+                        Color = Colors.White,
+                        WidthRequest = 60,
+                        HeightRequest = 60
+                    },
+                    new Label
+                    {
+                        Text = "🤖 Аналізую фото через AI...",
+                        TextColor = Colors.White,
+                        FontSize = 20,
+                        FontAttributes = FontAttributes.Bold,
+                        HorizontalOptions = LayoutOptions.Center
+                    },
+                    new Label
+                    {
+                        Text = "Це займе 5-15 секунд",
+                        TextColor = Colors.LightGray,
+                        FontSize = 14,
+                        HorizontalOptions = LayoutOptions.Center
+                    }
+                }
+                }
+            };
+
+            await Navigation.PushModalAsync(loadingPopup, false);
+
+            try
+            {
+                // КРОК 5: Відправляємо фото на аналіз до Gemini
+                System.Diagnostics.Debug.WriteLine($"🚀 Відправляємо фото на аналіз: {photoPathToAnalyze}");
+
+                var result = await _geminiService.AnalyzeFoodFromPathAsync(photoPathToAnalyze);
+
+                // Закриваємо індикатор
+                await Navigation.PopModalAsync(false);
+
+                // КРОК 6: Обробка результату
+                if (result.IsValid)
+                {
+                    // ✅ УСПІХ - автоматично заповнюємо поля
+                    DescriptionEntry.Text = result.DishName;
+                    CaloriesEntry.Text = result.Calories.ToString("F0");
+
+                    if (result.Protein.HasValue)
+                        ProteinEntry.Text = result.Protein.Value.ToString("F1");
+
+                    if (result.Fat.HasValue)
+                        FatEntry.Text = result.Fat.Value.ToString("F1");
+
+                    if (result.Carbs.HasValue)
+                        CarbsEntry.Text = result.Carbs.Value.ToString("F1");
+
+                    // Формуємо повідомлення для користувача
+                    string message = $"✅ AI успішно розпізнав страву!\n\n";
+                    message += $"🍽️ Страва: {result.DishName}\n";
+                    message += $"🔥 Калорії: {result.Calories:F0} ккал\n";
+
+                    if (result.Weight.HasValue)
+                        message += $"⚖️ Вага: ~{result.Weight:F0} г\n";
+
+                    if (result.Protein.HasValue || result.Fat.HasValue || result.Carbs.HasValue)
+                    {
+                        message += $"\n📊 БЖВ:\n";
+                        message += $"  • Білки: {result.Protein:F1} г\n";
+                        message += $"  • Жири: {result.Fat:F1} г\n";
+                        message += $"  • Вуглеводи: {result.Carbs:F1} г\n";
+                    }
+
+                    if (result.Confidence.HasValue)
+                    {
+                        string confidenceEmoji = result.Confidence.Value >= 0.8 ? "🎯" :
+                                                result.Confidence.Value >= 0.6 ? "⚠️" : "❓";
+                        message += $"\n{confidenceEmoji} Впевненість AI: {result.Confidence:P0}";
+                    }
+
+                    message += "\n\n💡 Перевірте дані та збережіть запис.";
+
+                    await DisplayAlert("🤖 AI Розпізнавання", message, "Добре");
+
+                    System.Diagnostics.Debug.WriteLine($"✅ Розпізнано: {result.DishName}, {result.Calories} ккал");
+                }
+                else
+                {
+                    // ❌ ПОМИЛКА або не розпізнано
+                    string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
+
+                    await DisplayAlert(
+                        "⚠️ Не вдалося розпізнати",
+                        $"{errorMessage}\n\n" +
+                        "Можливі причини:\n" +
+                        "• На фото немає їжі\n" +
+                        "• Фото нечітке або темне\n" +
+                        "• Перевищено ліміт API (15 запитів/хв)\n\n" +
+                        "💡 Спробуйте зробити інше фото або введіть дані вручну.",
+                        "OK");
+
+                    System.Diagnostics.Debug.WriteLine($"❌ Не розпізнано: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Закриваємо індикатор у разі помилки
+                await Navigation.PopModalAsync(false);
+
+                await DisplayAlert(
+                    "❌ Помилка",
+                    $"Не вдалося проаналізувати фото:\n{ex.Message}\n\n" +
+                    "Перевірте:\n" +
+                    "• Інтернет-з'єднання\n" +
+                    "• Налаштування API ключа\n" +
+                    "• Якість фото",
+                    "OK");
+
+                System.Diagnostics.Debug.WriteLine($"❌ Exception в аналізі: {ex}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("❌ Помилка",
+                $"Непередбачена помилка: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"❌ Outer exception: {ex}");
+        }
+    }
+
+    // Допоміжний метод збереження фото 
+    private async Task<string> SavePhotoAsync(FileResult photo)
+    {
+        if (photo == null) return null;
+
+        try
+        {
+            var photosDirectory = Path.Combine(FileSystem.AppDataDirectory, "FoodPhotos");
+            if (!Directory.Exists(photosDirectory))
+            {
+                Directory.CreateDirectory(photosDirectory);
+            }
+
+            string fileName = $"food_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+            string filePath = Path.Combine(photosDirectory, fileName);
+
+            using (var sourceStream = await photo.OpenReadAsync())
+            using (var fileStream = File.Create(filePath))
+            {
+                await sourceStream.CopyToAsync(fileStream);
+            }
+
+            System.Diagnostics.Debug.WriteLine($"✅ Фото збережено: {filePath}");
+            return filePath;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Помилка збереження: {ex}");
+            return null;
         }
     }
 

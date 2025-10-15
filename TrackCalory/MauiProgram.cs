@@ -27,7 +27,7 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        // ========== ДОДАТИ РЕЄСТРАЦІЮ СЕРВІСІВ ==========
+        // ========== РЕЄСТРАЦІЯ СЕРВІСІВ ==========
 
         // Визначаємо шлях до БД
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
@@ -50,6 +50,12 @@ public static class MauiProgram
 
         // Для фото 
         builder.Services.AddSingleton<Services.PhotoService>();
+
+        // Сервіс конфігурації (читає appsettings.json)
+        builder.Services.AddSingleton<Services.ConfigurationService>();
+        // Сервіс розпізнавання їжі через Gemini AI
+        builder.Services.AddSingleton<Services.GeminiVisionService>();
+
         return builder.Build();
     }
 }

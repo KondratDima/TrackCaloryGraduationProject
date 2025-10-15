@@ -9,7 +9,20 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new AppShell();
+        // ТЕСТ: Перевірка завантаження конфігурації
+        try
+        {
+            var configService = new Services.ConfigurationService();
+            bool hasKey = configService.IsApiKeyConfigured();
+            System.Diagnostics.Debug.WriteLine($"✅ API ключ налаштований: {hasKey}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Помилка конфігурації: {ex.Message}");
+        }
+
+
+        MainPage = new AppShell();
 
         CheckUserProfile();
 

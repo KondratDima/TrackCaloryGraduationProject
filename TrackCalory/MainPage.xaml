@@ -29,18 +29,30 @@
                BackgroundColor="White"
                BorderColor="#d2cbcd"
                HasShadow="False"
-               Padding="15">
-            <StackLayout Spacing="20">
+               Padding="12"
+               >
+            <StackLayout Spacing="8">
+
 
                 <!-- Основний заголовок -->
-                <Label Text="🍽️ Трекер калорій" 
-                       FontSize="22" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"
-                       TextColor="#694f55"/>
+                <Label Text="🍽️ Трекер калорій"
+                    FontSize="20"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    TextColor="#694f55"/>
+                <!-- Вибрана дата (клікабельна) -->
+                <Button Text="{Binding SelectedDateFormatted}"
+                    BackgroundColor="#aff3c0"
+                    TextColor="#694f55"
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    BorderWidth="3"
+                    BorderColor="#dad7d8"
+                    CornerRadius="25"
+                    Command="{Binding ShowDatePickerCommand}"/>
 
                 <!-- Навігація по датах -->
-                <Grid>
+                <Grid Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <!-- Ліва стрілка -->
@@ -53,7 +65,8 @@
                     <!-- Ліва стрілка (попередній день) -->
                     <Button Grid.Column="0"
                             Text="←"
-                            FontSize="24"
+                            FontSize="26"
+                            FontAttributes="Bold"
                             BackgroundColor="Transparent"
                             TextColor="#5fd37c"
                             WidthRequest="50"
@@ -65,23 +78,17 @@
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center">
 
-                        <!-- Вибрана дата (клікабельна) -->
-                        <Button Text="{Binding SelectedDateFormatted}"
-                              BackgroundColor="#98f1ae"
-                              TextColor="#694f55"
-                              FontSize="18"
-                              HeightRequest="40"
-                              CornerRadius="30"
-                              Command="{Binding ShowDatePickerCommand}"/>
-                        
-
                         <!-- Калорії за вибрану дату -->
-                        <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} ккал'}"
-                               FontSize="22"
+                        <Frame CornerRadius="15" 
+                               Padding="10" 
+                               Margin="0,0,0,5">
+                            <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} ккал'}"
+                               FontSize="24"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
                                TextColor="#e1607e"
                                Margin="0,5,0,0"/>
+                        </Frame>
                         <!-- Денна норма та прогрес -->
                         <Label Text="{Binding DailyGoal, StringFormat='🎯 Денна норма: {0:F0} ккал'}"
                               FontSize="12"
@@ -107,7 +114,8 @@
                     <!-- Права стрілка (наступний день) -->
                     <Button Grid.Column="2"
                             Text="→"
-                            FontSize="24"
+                            FontSize="26"
+                            FontAttributes="Bold"
                             BackgroundColor="Transparent"
                             TextColor="#5fd37c"
                             WidthRequest="50"
@@ -207,7 +215,7 @@
                                 <!-- Категорія -->
                                 <Label Text="{Binding Category, StringFormat='🍽️ {0}'}"
                                        FontSize="12"
-                                       TextColor="#3498DB"/>
+                                       TextColor="#9fc1a8"/>
 
                                 <!-- БЖУ (якщо є) -->
                                 <Label IsVisible="{Binding Protein}"
