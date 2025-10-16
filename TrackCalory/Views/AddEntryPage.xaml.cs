@@ -165,6 +165,9 @@ public partial class AddEntryPage : ContentPage
                 return;
             }
 
+            // ДУЖЕ ВАЖНО Чекаємо 100мс щоб Android завершив збереження стану після MediaPicker
+            await Task.Delay(100);
+
             // КРОК 4: Показуємо індикатор завантаження
             var loadingPopup = new ContentPage
             {
