@@ -7,6 +7,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+public static class NavigationHelper
+{
+    public static string PendingPhotoPath { get; set; }
+}
 
 namespace TrackCalory.ViewModels
 {
@@ -40,6 +44,7 @@ namespace TrackCalory.ViewModels
                 AddEntryCommand = new Command(async () => await AddEntry());
                 DetailCommand = new Command<CalorieEntry>(async (entry) => await OpenEntryDetails(entry));
                 RefreshCommand = new Command(async () => await RefreshDataAsync());
+                AddEntryAICommand = new Command(async () => await AddEntryAI());
 
                 // НОВІ КОМАНДИ для роботи з датами
                 PreviousDayCommand = new Command(async () => await GoToPreviousDay());
@@ -91,14 +96,7 @@ namespace TrackCalory.ViewModels
         {
             get
             {
-                /*if (SelectedDate.Date == DateTime.Today)
-                    return "📅 Сьогодні";
-                else if (SelectedDate.Date == DateTime.Today.AddDays(-1))
-                    return "📅 Вчора";
-                else if (SelectedDate.Date == DateTime.Today.AddDays(1))
-                    return "📅 Завтра";
-                else */
-                return $"📅 {SelectedDate:dd.MM.yyyy}";
+                return $"{SelectedDate:dd.MM.yyyy}";
             }
         }
 
@@ -131,6 +129,7 @@ namespace TrackCalory.ViewModels
 
         // ========== КОМАНДИ ==========
 
+        public ICommand AddEntryAICommand { get; private set; }
         public ICommand AddEntryCommand { get; private set; }
         public ICommand DetailCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
@@ -171,7 +170,7 @@ namespace TrackCalory.ViewModels
                 var page = new ContentPage
                 {
                     Title = "Виберіть дату",
-                    BackgroundColor = Color.FromArgb("#F5F5F5"),
+                    BackgroundColor = Color.FromArgb("#f0eaed"),
                     Content = new StackLayout
                     {
                         Padding = 20,
@@ -196,9 +195,9 @@ namespace TrackCalory.ViewModels
                              },
                             new Label
                             {
-                                Text = "📅 Оберіть дату для перегляду:",
-                                FontSize = 18,
-                                FontAttributes = FontAttributes.Bold,
+                                Text = "Оберіть дату для перегляду:",
+                                FontSize = 20,
+                                FontAttributes = FontAttributes.Italic,
                                 HorizontalOptions = LayoutOptions.Center
                             },
                             new Frame
@@ -212,6 +211,7 @@ namespace TrackCalory.ViewModels
                             new Button
                             {
                                 Text = "✅ Підтвердити",
+                                FontAttributes = FontAttributes.Bold,
                                 BackgroundColor = Color.FromArgb("#98f1ae"),
                                 TextColor = Colors.White,
                                 FontSize = 16,
@@ -225,6 +225,7 @@ namespace TrackCalory.ViewModels
                             new Button
                             {
                                 Text = "❌ Скасувати",
+                                FontAttributes = FontAttributes.Bold,
                                 BackgroundColor = Color.FromArgb("#a79599"),
                                 TextColor = Colors.White,
                                 FontSize = 16,
@@ -306,7 +307,6 @@ namespace TrackCalory.ViewModels
         }
 
         // Повертає str який пише скільки залишилося набрати колорій за день та чи перевищено
-        // ПОКИ НЕ ВИКОРИСТОВУЄТЬСЯ
         public string RemainingCaloriesFormatted
         {
             get
@@ -353,7 +353,7 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        // ========== ІСНУЮЧІ МЕТОДИ ==========
+        // ========== ОСНОВНІ МЕТОДИ ==========
 
         private async Task AddEntry()
         {
@@ -364,6 +364,127 @@ namespace TrackCalory.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"❌ Помилка навігації: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// ДОДАЄМО ФОТО ПІСЛЯ ЧОГО ПЕРЕХОДИМО ДО ADDENTRYPAGE
+        /// </summary>
+        private async Task AddEntryAI()
+        {
+            try
+            {
+                // КРОК 1: Запитуємо джерело фото
+                string action = await Application.Current.MainPage.DisplayActionSheet(
+                    "🤖 Швидке розпізнавання",
+                    "Скасувати",
+                    null,
+                    "📷 Зробити фото страви",
+                    "🖼️ Вибрати з галереї");
+
+                if (action == "Скасувати" || action == null)
+                    return;
+
+                string photoPathToAnalyze = null;
+
+                if (action == "📷 Зробити фото страви")
+                {
+                    // Перевірка дозволу на камеру
+                    var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                    if (cameraStatus != PermissionStatus.Granted)
+                    {
+                        cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                        if (cameraStatus != PermissionStatus.Granted)
+                        {
+                            await Application.Current.MainPage.DisplayAlert(
+                                "❌ Доступ заборонено",
+                                "Для камери потрібен дозвіл у налаштуваннях",
+                                "OK");
+                            return;
+                        }
+                    }
+
+                     var photo = await MediaPicker.Default.CapturePhotoAsync();
+                     if (photo != null)
+                     {
+                         photoPathToAnalyze = await SavePhotoAsync(photo);
+                     }
+                    NavigationHelper.PendingPhotoPath = photoPathToAnalyze;
+                    await Shell.Current.GoToAsync("//AddEntryPage");
+                }
+                else if (action == "🖼️ Вибрати з галереї")
+                {
+                    // Перевірка дозволу на галерею
+                    var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
+                    if (photoStatus != PermissionStatus.Granted)
+                    {
+                        photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
+                        if (photoStatus != PermissionStatus.Granted)
+                        {
+                            await Application.Current.MainPage.DisplayAlert(
+                                "❌ Доступ заборонено",
+                                "Для галереї потрібен дозвіл у налаштуваннях",
+                                "OK");
+                            return;
+                        }
+                    }
+
+                    var photo = await MediaPicker.Default.PickPhotoAsync();
+                    if (photo != null)
+                    {
+                        photoPathToAnalyze = await SavePhotoAsync(photo);
+                       // await DisplayPhotoPreview(photoPathToAnalyze);
+                    }
+                    NavigationHelper.PendingPhotoPath = photoPathToAnalyze;
+                    await Shell.Current.GoToAsync("//AddEntryPage");
+                    
+                }
+                // КРОК 3: Перевірка наявності фото
+                if (string.IsNullOrEmpty(photoPathToAnalyze))
+                {
+                    await Application.Current.MainPage.DisplayAlert("⚠️ Помилка", "Не вдалося отримати фото для аналізу", "OK");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Помилка швидкого розпізнавання: {ex.Message}");
+                await Application.Current.MainPage.DisplayAlert(
+                    "❌ Помилка",
+                    $"Не вдалося розпізнати: {ex.Message}",
+                    "OK");
+            }
+
+        }
+        // Допоміжний метод збереження фото 
+        
+        private async Task<string> SavePhotoAsync(FileResult photo)
+        {
+            if (photo == null) return null;
+
+            try
+            {
+                var photosDirectory = Path.Combine(FileSystem.AppDataDirectory, "FoodPhotos");
+                if (!Directory.Exists(photosDirectory))
+                {
+                    Directory.CreateDirectory(photosDirectory);
+                }
+
+                string fileName = $"food_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                string filePath = Path.Combine(photosDirectory, fileName);
+
+                using (var sourceStream = await photo.OpenReadAsync())
+                using (var fileStream = File.Create(filePath))
+                {
+                    await sourceStream.CopyToAsync(fileStream);
+                }
+
+                System.Diagnostics.Debug.WriteLine($"✅ Фото збережено: {filePath}");
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Помилка збереження: {ex}");
+                return null;
             }
         }
 

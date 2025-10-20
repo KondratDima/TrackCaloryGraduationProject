@@ -12,8 +12,9 @@
     TabBarForegroundColor="#f4becb"
     TabBarTitleColor="Black">
 
-    <ShellContent Title="Головна"
+    <ShellContent Title="Трекер калорій"
                   ContentTemplate="{DataTemplate local:MainPage}"
+                  Route="MainPage"
                   />
 
     <ShellContent Title="Додати"

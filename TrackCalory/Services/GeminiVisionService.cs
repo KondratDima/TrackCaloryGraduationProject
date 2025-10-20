@@ -8,12 +8,12 @@ using Newtonsoft.Json.Linq;
 namespace TrackCalory.Services
 {
     /// <summary>
-    /// Сервіс для розпізнавання їжі на фото через Google Gemini AI.
+    /// Сервіс для розпізнавання їжі на фото через Google Gemini AI
     /// 
     /// ЛОГІКА РОБОТИ:
-    /// 1. Отримує шлях до фото (зберігається через PhotoService)
+    /// 1. Отримує шлях до фото (зберігається PhotoService)
     /// 2. Читає фото як байти
-    /// 3. Конвертує в Base64 (формат для API)
+    /// 3. Конвертує в Base64 
     /// 4. Відправляє до Gemini API з промптом
     /// 5. Парсить JSON відповідь з калоріями та БЖУ
     /// 
@@ -22,7 +22,6 @@ namespace TrackCalory.Services
     /// - GeminiVisionService читає фото за шляхом → аналізує
     /// 
     /// МОДЕЛЬ: gemini-2.0-flash 
-    /// ТЕМПЕРАТУРА: 0.1 
     /// </summary>
     public class GeminiVisionService
     {

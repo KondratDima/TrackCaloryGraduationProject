@@ -6,24 +6,56 @@
     <ScrollView>
         <StackLayout Padding="20" Spacing="15">
 
+            
+
+            <Border HeightRequest="50"
+                    WidthRequest="400"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,0,0,20">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="1,1">
+                        <GradientStop Color="#f4becb" Offset="0.25"/>
+                        <GradientStop Color="#5fd37c" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Button Text="Розпізнати калорії з AI"
+                        ImageSource="robot.png"
+                        MaximumHeightRequest="60"
+                        ContentLayout="Left, 10"
+                        TextColor="White"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                       BackgroundColor="Transparent"
+                         Clicked="OnAnalyzePhotoClicked"/>
+            </Border>
+
             <Label Text="Додати новий запис про калорії" 
-                   FontSize="24" 
+                   FontSize="27" 
                    FontAttributes="Bold"
                    TextColor="#694f55"
                    HorizontalOptions="Center"
-                   Margin="0,0,0,20"/>
+                   Margin="0,0,0,0"/>
+
+            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,0"/>
 
             <!-- СЕКЦІЯ ФОТО -->
             <Frame BackgroundColor="#f0eaed" 
                    HasShadow="False" 
                    CornerRadius="10" 
                    Padding="15"
-                   Margin="0,0,0,10">
+                   Margin="0,0,0,0">
                 <StackLayout Spacing="10">
-                    <Label Text="📸 Фото страви (необов'язково)" 
+                    <HorizontalStackLayout>
+                        <Image Source="camera.png"
+                               MaximumHeightRequest="22"
+                               Margin="0,0,5,0"
+                            />
+                        <Label Text="Фото страви (необов'язково)" 
+                           
                            FontSize="16" 
                            FontAttributes="Bold"/>
-
+                    </HorizontalStackLayout>
                     <!-- Прев'ю фото -->
                     <Frame x:Name="PhotoPreviewFrame"
                            IsVisible="False"
@@ -54,32 +86,20 @@
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                         <Button Grid.Column="0"
                                 Text="📷 Камера"
-                                BackgroundColor="#5fd37c"
-                                TextColor="White"
-                                FontSize="14"
+                                BackgroundColor="#aff3c0"
+                                TextColor="Black"
+                                FontSize="12"
                                 Clicked="OnTakePhotoClicked"/>
 
                         <Button Grid.Column="1"
                                 Text="🖼️ Галерея"
-                                BackgroundColor="#5fd37c"
-                                TextColor="White"
-                                FontSize="14"
+                                BackgroundColor="#aff3c0"
+                                TextColor="Black"
+                                FontSize="12"
                                 Clicked="OnPickPhotoClicked"/>
                     </Grid>
                 </StackLayout>
             </Frame>
-            
-            <Button Text="🤖 Розпізнати калорії з AI"
-              BackgroundColor="#4A90E2"
-              TextColor="White"
-              FontSize="16"
-              FontAttributes="Bold"
-              HeightRequest="50"
-              CornerRadius="10"
-              Clicked="OnAnalyzePhotoClicked"
-              Margin="0,10,0,0"/>
-            
-            <BoxView HeightRequest="1" BackgroundColor="LightGray" Margin="0,10"/>
 
             <!-- СЕКЦІЯ РУЧНОГО ОПИСУ СТРАВИ -->
             <Label Text="Опис страви:" FontSize="16"/>

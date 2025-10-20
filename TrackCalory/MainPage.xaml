@@ -4,7 +4,7 @@
              xmlns:viewmodels="clr-namespace:TrackCalory.ViewModels"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="TrackCalory.MainPage"
-             Title="Калорії"
+             Title="Трекер калорій"
              BackgroundColor="#d6d1d3">
 
     <ContentPage.BindingContext>
@@ -33,23 +33,20 @@
                >
             <StackLayout Spacing="8">
 
-
-                <!-- Основний заголовок -->
-                <Label Text="🍽️ Трекер калорій"
-                    FontSize="20"
-                    FontAttributes="Bold"
-                    HorizontalOptions="Center"
-                    TextColor="#694f55"/>
                 <!-- Вибрана дата (клікабельна) -->
                 <Button Text="{Binding SelectedDateFormatted}"
+                    ImageSource="calendar.png"
+                    MaximumHeightRequest="45"
+                    ContentLayout="Left, 10"
                     BackgroundColor="#aff3c0"
                     TextColor="#694f55"
-                    FontSize="14"
+                    FontSize="15"
                     HorizontalOptions="Center"
-                    BorderWidth="3"
+                    BorderWidth="0"
                     BorderColor="#dad7d8"
                     CornerRadius="25"
-                    Command="{Binding ShowDatePickerCommand}"/>
+                    Command="{Binding ShowDatePickerCommand}">
+                </Button>
 
                 <!-- Навігація по датах -->
                 <Grid Margin="0,0,0,0">
@@ -65,7 +62,7 @@
                     <!-- Ліва стрілка (попередній день) -->
                     <Button Grid.Column="0"
                             Text="←"
-                            FontSize="26"
+                            FontSize="30"
                             FontAttributes="Bold"
                             BackgroundColor="Transparent"
                             TextColor="#5fd37c"
@@ -80,11 +77,12 @@
 
                         <!-- Калорії за вибрану дату -->
                         <Frame CornerRadius="15" 
-                               Padding="10" 
-                               Margin="0,0,0,5">
-                            <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} ккал'}"
-                               FontSize="24"
-                               FontAttributes="Bold"
+                               Padding="20" 
+                               Margin="0,0,5,5"
+                               BorderColor="#f4becb">
+                            <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} kkal'}"
+                               FontSize="21"
+                               FontAttributes="Bold" 
                                HorizontalOptions="Center"
                                TextColor="#e1607e"
                                Margin="0,5,0,0"/>
@@ -114,7 +112,7 @@
                     <!-- Права стрілка (наступний день) -->
                     <Button Grid.Column="2"
                             Text="→"
-                            FontSize="26"
+                            FontSize="30"
                             FontAttributes="Bold"
                             BackgroundColor="Transparent"
                             TextColor="#5fd37c"
@@ -142,16 +140,19 @@
                 <StackLayout HorizontalOptions="Center" 
                             VerticalOptions="Center"
                             Padding="50">
-                    <Label Text="📭"
-                           FontSize="48"
-                           HorizontalOptions="Center"/>
+                    <Image Source="strawberry.png"
+                           MaximumHeightRequest="120"
+                           Opacity="0.2"
+                        />
                     <Label Text="Немає записів за цю дату"
+                           Opacity="0.8"
                            FontSize="16"
                            FontAttributes="Italic"
                            TextColor="Gray"
                            HorizontalOptions="Center"/>
                     <Label Text="{Binding SelectedDateFormatted}"
-                           FontSize="14"
+                           Opacity="0.8"
+                           FontSize="10"
                            TextColor="Gray"
                            HorizontalOptions="Center"/>
                 </StackLayout>
@@ -260,13 +261,45 @@
         <Frame Grid.Row="2" 
                BackgroundColor="Transparent"
                Padding="20,10">
-            <Button Text="➕ Додати запис"
-                    BackgroundColor="#5fd37c"
-                    TextColor="White"
-                    FontSize="18"
-                    HeightRequest="60"
-                    CornerRadius="30"
-                    Command="{Binding AddEntryCommand}"/>
+            <Grid Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <Border HeightRequest="60"
+                    StrokeShape="RoundRectangle 30"
+                    Margin="0,0,0,0"
+                    Grid.Column="0">
+                    <Border.Background>
+                        <LinearGradientBrush EndPoint="1,1">
+                            <GradientStop Color="#f4becb" Offset="0.25"/>
+                            <GradientStop Color="#5fd37c" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <Button Text="Розпізнати калорії з AI"
+                        ImageSource="robot.png"
+                        MaximumHeightRequest="60"
+                        ContentLayout="Left, 10"
+                        Grid.Column="0"
+                        TextColor="White"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        HeightRequest="60"
+                        CornerRadius="30"
+                        BackgroundColor="Transparent"
+                        Command="{Binding AddEntryAICommand}"
+                        />
+                </Border>
+
+                <ImageButton Source="plus.png"
+                        Grid.Column="1"
+                        BackgroundColor="#5fd37c"
+                        HeightRequest="60"
+                        WidthRequest="60" CornerRadius="28"
+                        Command="{Binding AddEntryCommand}"
+                        Padding="16" Aspect="AspectFit" />
+            </Grid>
         </Frame>
     </Grid>
 
