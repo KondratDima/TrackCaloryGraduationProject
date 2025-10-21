@@ -35,7 +35,7 @@
 
                 <!-- Вибрана дата (клікабельна) -->
                 <Button Text="{Binding SelectedDateFormatted}"
-                    ImageSource="calendar.png"
+                    ImageSource="calendarcropv3.png"
                     MaximumHeightRequest="45"
                     ContentLayout="Left, 10"
                     BackgroundColor="#aff3c0"
@@ -76,9 +76,9 @@
                                 VerticalOptions="Center">
 
                         <!-- Калорії за вибрану дату -->
-                        <Frame CornerRadius="15" 
-                               Padding="20" 
-                               Margin="0,0,5,5"
+                        <Frame CornerRadius="18" 
+                               Padding="15" 
+                               Margin="0,0,5,2"
                                BorderColor="#f4becb">
                             <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} kkal'}"
                                FontSize="21"
@@ -118,6 +118,7 @@
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
+                            Padding="0,0,0,0"
                             Command="{Binding NextDayCommand}"/>
                 </Grid>
 
@@ -140,7 +141,7 @@
                 <StackLayout HorizontalOptions="Center" 
                             VerticalOptions="Center"
                             Padding="50">
-                    <Image Source="strawberry.png"
+                    <Image Source="strawberryv2.png"
                            MaximumHeightRequest="120"
                            Opacity="0.2"
                         />
@@ -264,7 +265,7 @@
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
                 <Border HeightRequest="60"
                     StrokeShape="RoundRectangle 30"
@@ -278,27 +279,28 @@
                     </Border.Background>
 
                     <Button Text="Розпізнати калорії з AI"
-                        ImageSource="robot.png"
-                        MaximumHeightRequest="60"
-                        ContentLayout="Left, 10"
-                        Grid.Column="0"
-                        TextColor="White"
-                        FontSize="18"
-                        FontAttributes="Bold"
-                        HeightRequest="60"
-                        CornerRadius="30"
-                        BackgroundColor="Transparent"
-                        Command="{Binding AddEntryAICommand}"
-                        />
+                            ImageSource="robot42x52.png"
+                            MaximumHeightRequest="60"
+                            ContentLayout="Left, 10"
+                            Grid.Column="0"
+                            TextColor="White"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            HeightRequest="60"
+                            CornerRadius="30"
+                            BackgroundColor="Transparent"
+                            Command="{Binding AddEntryAICommand}">
+                    </Button>
                 </Border>
 
-                <ImageButton Source="plus.png"
+                <ImageButton Source="plus42x42.png"
                         Grid.Column="1"
                         BackgroundColor="#5fd37c"
                         HeightRequest="60"
-                        WidthRequest="60" CornerRadius="28"
+                        WidthRequest="65" 
+                        CornerRadius="25"
                         Command="{Binding AddEntryCommand}"
-                        Padding="16" Aspect="AspectFit" />
+                        Padding="12" Aspect="AspectFit" />
             </Grid>
         </Frame>
     </Grid>

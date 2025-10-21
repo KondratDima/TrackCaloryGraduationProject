@@ -9,7 +9,7 @@
             
 
             <Border HeightRequest="50"
-                    WidthRequest="400"
+                    WidthRequest="300"
                     StrokeShape="RoundRectangle 10"
                     Margin="0,0,0,20">
                 <Border.Background>
@@ -20,7 +20,7 @@
                 </Border.Background>
 
                 <Button Text="Розпізнати калорії з AI"
-                        ImageSource="robot.png"
+                        ImageSource="robot35x42.png"
                         MaximumHeightRequest="60"
                         ContentLayout="Left, 10"
                         TextColor="White"
