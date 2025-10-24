@@ -19,7 +19,7 @@ namespace TrackCalory.ViewModels
         private CalorieDataService _dataService;
         private DateTime _selectedDate;
         private double _selectedDateCalories;
-        private ObservableCollection<CalorieEntry> _filteredEntries;
+        private ObservableCollection<CalorieEntry> _filteredEntries = new ObservableCollection<CalorieEntry>();
 
         public MainPageViewModel()
         {
@@ -55,7 +55,7 @@ namespace TrackCalory.ViewModels
                 _ = LoadDataForSelectedDateAsync();
 
                 // Завантажуємо дані для добової калорійності
-                _ = LoadUserProfileAsync();
+                _ = LoadUserProfileAsync();   
             }
             catch (Exception ex)
             {
@@ -248,8 +248,14 @@ namespace TrackCalory.ViewModels
         }
 
         // ========== ЗАВАНТАЖЕННЯ ДАНИХ ЗА ДАТОЮ ==========
-
-        private async Task LoadDataForSelectedDateAsync()
+        public async Task StrwbrInitAndroid()
+        {
+            SelectedDate = DateTime.Today;
+        }
+        /// <summary>
+        /// ГОЛОВНЕ ЗАВАНТАЖЕННЯ ДАНИХ НА MAINPAGE
+        /// </summary>
+        public async Task LoadDataForSelectedDateAsync()
         {
             try
             {
@@ -257,14 +263,14 @@ namespace TrackCalory.ViewModels
 
                 // Отримуємо записи за вибрану дату
                 var entriesForDate = await _dataService.GetEntriesByDateAsync(SelectedDate);
-
+              
                 // Оновлюємо колекцію
                 FilteredEntries.Clear();
                 foreach (var entry in entriesForDate)
                 {
                     FilteredEntries.Add(entry);
                 }
-
+                
                 // Отримуємо загальну кількість калорій за дату
                 SelectedDateCalories = await _dataService.GetTotalCaloriesForDateAsync(SelectedDate);
 
@@ -515,16 +521,16 @@ namespace TrackCalory.ViewModels
                 // Оновлюємо дані за поточну дату
                 await LoadDataForSelectedDateAsync();
 
-                System.Diagnostics.Debug.WriteLine($"✅ Дані оновлено для {SelectedDate:dd.MM.yyyy}");
+                System.Diagnostics.Debug.WriteLine($"Дані оновлено для {SelectedDate:dd.MM.yyyy}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка оновлення даних: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка оновлення даних: {ex.Message}");
             }
         }
 
+        // Допоміжний метод оновлення данних (загальний)
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -9,6 +9,10 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
+        // примусово світла тема
+        Application.Current.UserAppTheme = AppTheme.Light;
+        this.RequestedThemeChanged += (s, e) => { Application.Current.UserAppTheme = AppTheme.Light; };
+
         // ТЕСТ: Перевірка завантаження конфігурації
         try
         {

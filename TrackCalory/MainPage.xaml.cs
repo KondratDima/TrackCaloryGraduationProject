@@ -16,7 +16,14 @@ namespace TrackCalory
             // Асинхронно оновлюємо дані при поверненні на головну сторінку
             if (BindingContext is MainPageViewModel viewModel)
             {
+                // await Task.Delay(100);
+                await Task.Delay(100);
                 await viewModel.RefreshDataAsync();
+                await Task.Delay(50);
+                this.ForceLayout();
+                //await Task.Delay(50);
+                //await Task.Delay(100);
+                //await viewModel.LoadDataForSelectedDateAsync();
             }
         }
     }

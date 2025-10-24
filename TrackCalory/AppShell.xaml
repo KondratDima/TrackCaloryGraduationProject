@@ -6,11 +6,12 @@
     xmlns:local="clr-namespace:TrackCalory"
     xmlns:views="clr-namespace:TrackCalory.Views"
     Title="CalorieTracker"
+    Shell.BackgroundColor="#f4becb"
+    Shell.ForegroundColor="#aff3c0"
+    Shell.TitleColor="Black"
     BackgroundColor="#f4becb"
-    DisabledColor="#d2cbcd"
-    UnselectedColor="#d2cbcd"
     TabBarForegroundColor="#f4becb"
-    TabBarTitleColor="Black">
+    >
 
     <ShellContent Title="Трекер калорій"
                   ContentTemplate="{DataTemplate local:MainPage}"

@@ -5,7 +5,9 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="TrackCalory.MainPage"
              Title="Трекер калорій"
-             BackgroundColor="#d6d1d3">
+             BackgroundColor="#d6d1d3"
+              Shell.BackgroundColor="#f4becb"
+             Shell.ForegroundColor="#aff3c0">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
@@ -14,7 +16,7 @@
     <ContentPage.Behaviors>
         <toolkit:StatusBarBehavior 
             StatusBarColor="#f4becb"     
-            StatusBarStyle="LightContent" />
+            StatusBarStyle="DarkContent" />
     </ContentPage.Behaviors>
 
     <Grid>
@@ -64,7 +66,9 @@
                             Text="←"
                             FontSize="30"
                             FontAttributes="Bold"
-                            BackgroundColor="Transparent"
+                            BackgroundColor="White"
+                            BorderColor="Transparent"
+                            BorderWidth="0"
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
@@ -115,6 +119,8 @@
                             FontSize="30"
                             FontAttributes="Bold"
                             BackgroundColor="Transparent"
+                            BorderColor="Transparent"
+                            BorderWidth="0"
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
@@ -159,7 +165,7 @@
                 </StackLayout>
             </CollectionView.EmptyView>
 
-            <!-- Самі списки -->
+        <!-- Самі списки -->
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BorderColor="LightGray" 
@@ -284,7 +290,9 @@
                             ContentLayout="Left, 10"
                             Grid.Column="0"
                             TextColor="White"
-                            FontSize="16"
+                            BorderColor="Transparent"
+                            BorderWidth="0"
+                            FontSize="14"
                             FontAttributes="Bold"
                             HeightRequest="60"
                             CornerRadius="30"
@@ -298,9 +306,9 @@
                         BackgroundColor="#5fd37c"
                         HeightRequest="60"
                         WidthRequest="65" 
-                        CornerRadius="25"
+                        CornerRadius="15"
                         Command="{Binding AddEntryCommand}"
-                        Padding="12" Aspect="AspectFit" />
+                        Padding="6" Aspect="AspectFit" />
             </Grid>
         </Frame>
     </Grid>
