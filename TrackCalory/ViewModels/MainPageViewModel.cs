@@ -9,7 +9,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 public static class NavigationHelper
 {
-    public static string PendingPhotoPath { get; set; }
+    public static string PendingPhotoPath { get; set; } // клас передачі путі фото до AddEntryPage
 }
 
 namespace TrackCalory.ViewModels
@@ -117,11 +117,11 @@ namespace TrackCalory.ViewModels
                 var daysDiff = (DateTime.Today - SelectedDate.Date).TotalDays;
                 return daysDiff switch
                 {
-                    0 => "🟢 Сьогодні",
-                    1 => "🔵 Вчора",
-                    -1 => "🟡 Завтра",
-                    > 1 => $"🔵 {daysDiff} днів тому",
-                    < -1 => $"🟡 Через {Math.Abs(daysDiff)} днів",
+                    0 => "Сьогодні",
+                    1 => "Вчора",
+                    -1 => "Завтра",
+                    > 1 => $"{daysDiff} днів тому",
+                    < -1 => $"Через {Math.Abs(daysDiff)} днів",
                     _ => ""
                 };
             }
@@ -166,7 +166,7 @@ namespace TrackCalory.ViewModels
                     FontSize = 18,
                     HorizontalOptions = LayoutOptions.Center
                 };
-                
+
                 var page = new ContentPage
                 {
                     Title = "Виберіть дату",
@@ -176,66 +176,66 @@ namespace TrackCalory.ViewModels
                         Padding = 20,
                         Spacing = 20,
                         Children =
+                                {
+                        new Button
                         {
-                             new Button
-                             {
-                                IsVisible = datePicker.Date != DateTime.Today,
-                                Text = "Сьогодні",
-                                FontSize = 22,
-                                FontAttributes = FontAttributes.Bold,
-                                BackgroundColor = Color.FromArgb("#5fd37c"),
-                                TextColor = Color.FromArgb("#ffffff"),
-                                CornerRadius = 15,
-                                Padding = new Thickness(0, 15, 0, 15),
-                                Command = new Command(async () =>
-                                {
-                                  SelectedDate = DateTime.Today;
-                                  await Application.Current.MainPage.Navigation.PopAsync();
-                                })
-                             },
-                            new Label
-                            {
-                                Text = "Оберіть дату для перегляду:",
-                                FontSize = 20,
-                                FontAttributes = FontAttributes.Italic,
-                                HorizontalOptions = LayoutOptions.Center
-                            },
-                            new Frame
-                            {
-                                BackgroundColor = Colors.White,
-                                HasShadow = true,
-                                CornerRadius = 10,
-                                Padding = 20,
-                                Content = datePicker
-                            },
-                            new Button
-                            {
-                                Text = "✅ Підтвердити",
-                                FontAttributes = FontAttributes.Bold,
-                                BackgroundColor = Color.FromArgb("#98f1ae"),
-                                TextColor = Colors.White,
-                                FontSize = 16,
-                                CornerRadius = 10,
-                                Command = new Command(async () =>
-                                {
-                                    SelectedDate = datePicker.Date;
-                                    await Application.Current.MainPage.Navigation.PopAsync();
-                                })
-                            },
-                            new Button
-                            {
-                                Text = "❌ Скасувати",
-                                FontAttributes = FontAttributes.Bold,
-                                BackgroundColor = Color.FromArgb("#a79599"),
-                                TextColor = Colors.White,
-                                FontSize = 16,
-                                CornerRadius = 10,
-                                Command = new Command(async () =>
-                                {
-                                    await Application.Current.MainPage.Navigation.PopAsync();
-                                })
+                        IsVisible = datePicker.Date != DateTime.Today,
+                        Text = "Сьогодні",
+                        FontSize = 22,
+                        FontAttributes = FontAttributes.Bold,
+                        BackgroundColor = Color.FromArgb("#5fd37c"),
+                        TextColor = Color.FromArgb("#ffffff"),
+                        CornerRadius = 15,
+                        Padding = new Thickness(0, 15, 0, 15),
+                        Command = new Command(async () =>
+                        {
+                          SelectedDate = DateTime.Today;
+                          await Application.Current.MainPage.Navigation.PopAsync();
+                        })
+                        },
+                    new Label
+                    {
+                        Text = "Оберіть дату для перегляду:",
+                        FontSize = 20,
+                        FontAttributes = FontAttributes.Italic,
+                        HorizontalOptions = LayoutOptions.Center
+                    },
+                    new Frame
+                    {
+                        BackgroundColor = Colors.White,
+                        HasShadow = true,
+                        CornerRadius = 10,
+                        Padding = 20,
+                        Content = datePicker
+                    },
+                    new Button
+                    {
+                        Text = "✅ Підтвердити",
+                        FontAttributes = FontAttributes.Bold,
+                        BackgroundColor = Color.FromArgb("#98f1ae"),
+                        TextColor = Colors.White,
+                        FontSize = 16,
+                        CornerRadius = 10,
+                        Command = new Command(async () =>
+                        {
+                            SelectedDate = datePicker.Date;
+                            await Application.Current.MainPage.Navigation.PopAsync();
+                        })
+                    },
+                    new Button
+                    {
+                        Text = "❌ Скасувати",
+                        FontAttributes = FontAttributes.Bold,
+                        BackgroundColor = Color.FromArgb("#a79599"),
+                        TextColor = Colors.White,
+                        FontSize = 16,
+                        CornerRadius = 10,
+                        Command = new Command(async () =>
+                        {
+                            await Application.Current.MainPage.Navigation.PopAsync();
+                        })
+                    }
                             }
-                        }
                     }
                 };
 
@@ -245,13 +245,11 @@ namespace TrackCalory.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"❌ Помилка показу DatePicker: {ex.Message}");
             }
+
         }
 
         // ========== ЗАВАНТАЖЕННЯ ДАНИХ ЗА ДАТОЮ ==========
-        public async Task StrwbrInitAndroid()
-        {
-            SelectedDate = DateTime.Today;
-        }
+
         /// <summary>
         /// ГОЛОВНЕ ЗАВАНТАЖЕННЯ ДАНИХ НА MAINPAGE
         /// </summary>
@@ -372,6 +370,7 @@ namespace TrackCalory.ViewModels
                 System.Diagnostics.Debug.WriteLine($"❌ Помилка навігації: {ex.Message}");
             }
         }
+
         /// <summary>
         /// ДОДАЄМО ФОТО ПІСЛЯ ЧОГО ПЕРЕХОДИМО ДО ADDENTRYPAGE
         /// </summary>
@@ -394,22 +393,13 @@ namespace TrackCalory.ViewModels
 
                 if (action == "📷 Зробити фото страви")
                 {
-                    // Перевірка дозволу на камеру
-                    var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
-                    if (cameraStatus != PermissionStatus.Granted)
+                    // ПЕРЕВІРКА ДОЗВОЛІВ
+                    if (!await Services.PermissionsHelper.CheckAndRequestCameraPermissionAsync())
                     {
-                        cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
-                        if (cameraStatus != PermissionStatus.Granted)
-                        {
-                            await Application.Current.MainPage.DisplayAlert(
-                                "❌ Доступ заборонено",
-                                "Для камери потрібен дозвіл у налаштуваннях",
-                                "OK");
-                            return;
-                        }
+                        return;
                     }
 
-                     var photo = await MediaPicker.Default.CapturePhotoAsync();
+                    var photo = await MediaPicker.Default.CapturePhotoAsync();
                      if (photo != null)
                      {
                          photoPathToAnalyze = await SavePhotoAsync(photo);
@@ -419,19 +409,10 @@ namespace TrackCalory.ViewModels
                 }
                 else if (action == "🖼️ Вибрати з галереї")
                 {
-                    // Перевірка дозволу на галерею
-                    var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
-                    if (photoStatus != PermissionStatus.Granted)
+                    // ПЕРЕВІРКА ДОЗВОЛІВ
+                    if (!await Services.PermissionsHelper.CheckAndRequestPhotosPermissionAsync())
                     {
-                        photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
-                        if (photoStatus != PermissionStatus.Granted)
-                        {
-                            await Application.Current.MainPage.DisplayAlert(
-                                "❌ Доступ заборонено",
-                                "Для галереї потрібен дозвіл у налаштуваннях",
-                                "OK");
-                            return;
-                        }
+                        return;
                     }
 
                     var photo = await MediaPicker.Default.PickPhotoAsync();

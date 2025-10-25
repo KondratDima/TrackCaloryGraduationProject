@@ -15,6 +15,7 @@
                 <Border.Background>
                     <LinearGradientBrush EndPoint="1,1">
                         <GradientStop Color="#f4becb" Offset="0.25"/>
+                        <GradientStop Color="#9dd392" Offset="0.6"/>
                         <GradientStop Color="#5fd37c" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
@@ -31,7 +32,7 @@
             </Border>
 
             <Label Text="Додати новий запис про калорії" 
-                   FontSize="27" 
+                   FontSize="22"
                    FontAttributes="Bold"
                    TextColor="#694f55"
                    HorizontalOptions="Center"

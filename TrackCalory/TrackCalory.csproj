@@ -32,8 +32,30 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0-android|AnyCPU'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	<!-- КРИТИЧНІ НАЛАШТУВАННЯ ДЛЯ RELEASE -->
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+
+		<!-- Вимикаємо AOT та Linker для сумісності з MIUI -->
+		<AndroidEnableProfiler>false</AndroidEnableProfiler>
+		<AndroidLinkMode>None</AndroidLinkMode>
+		<RunAOTCompilation>false</RunAOTCompilation>
+		<PublishTrimmed>false</PublishTrimmed>
+
+		<!-- Вбудовуємо всі збірки в APK -->
+		<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+		<AndroidUseAapt2>true</AndroidUseAapt2>
+
+		<!-- Залишаємо символи для діагностики -->
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+
+		<!-- Підтримка всіх ABI (arm64-v8a, armeabi-v7a, x86_64) -->
+		<AndroidSupportedAbis>arm64-v8a;armeabi-v7a</AndroidSupportedAbis>
+
+		<!-- Додаткові налаштування для стабільності на MIUI -->
+		<AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+		<AndroidDexTool>d8</AndroidDexTool>
 	</PropertyGroup>
 
 	<ItemGroup>

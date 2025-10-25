@@ -8,7 +8,7 @@
     Title="CalorieTracker"
     Shell.BackgroundColor="#f4becb"
     Shell.ForegroundColor="#aff3c0"
-    Shell.TitleColor="Black"
+    Shell.TitleColor="White"
     BackgroundColor="#f4becb"
     TabBarForegroundColor="#f4becb"
     >

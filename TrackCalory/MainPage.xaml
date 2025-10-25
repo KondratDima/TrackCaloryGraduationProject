@@ -72,6 +72,7 @@
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
+                            Padding="0,0,5,-5"
                             Command="{Binding PreviousDayCommand}"/>
 
                     <!-- Центральна частина: дата та калорії -->
@@ -81,9 +82,11 @@
 
                         <!-- Калорії за вибрану дату -->
                         <Frame CornerRadius="18" 
+                               HorizontalOptions="CenterAndExpand"
                                Padding="15" 
                                Margin="0,0,5,2"
-                               BorderColor="#f4becb">
+                               BorderColor="#f4becb"
+                               BackgroundColor="#fff5f7">
                             <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} kkal'}"
                                FontSize="21"
                                FontAttributes="Bold" 
@@ -99,7 +102,7 @@
                               TextColor="#7F8C8D"/>
 
                         <Label Text="{Binding RemainingCaloriesFormatted}"
-                              FontSize="11"
+                              FontSize="12"
                               HorizontalOptions="Center"
                               TextColor="#dad7d8"
                               Margin="0,15,0,-5"/>
@@ -267,7 +270,7 @@
         <!-- Кнопка додавання -->
         <Frame Grid.Row="2" 
                BackgroundColor="Transparent"
-               Padding="20,10">
+               Padding="7,7">
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -279,7 +282,8 @@
                     Grid.Column="0">
                     <Border.Background>
                         <LinearGradientBrush EndPoint="1,1">
-                            <GradientStop Color="#f4becb" Offset="0.25"/>
+                            <GradientStop Color="#f4becb" Offset="0.28"/>
+                            <GradientStop Color="#9dd392" Offset="0.6"/>
                             <GradientStop Color="#5fd37c" Offset="1"/>
                         </LinearGradientBrush>
                     </Border.Background>
@@ -306,9 +310,9 @@
                         BackgroundColor="#5fd37c"
                         HeightRequest="60"
                         WidthRequest="65" 
-                        CornerRadius="15"
+                        CornerRadius="22"
                         Command="{Binding AddEntryCommand}"
-                        Padding="6" Aspect="AspectFit" />
+                        Padding="9" Aspect="AspectFit" />
             </Grid>
         </Frame>
     </Grid>

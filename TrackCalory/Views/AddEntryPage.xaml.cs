@@ -31,7 +31,7 @@ public partial class AddEntryPage : ContentPage
     }
 
     /// <summary>
-    /// Зберегти запис
+    /// ЗБЕРЕГТИ ЗАПИС
     /// </summary>
     private async void OnSaveClicked(object sender, EventArgs e)
     {
@@ -101,6 +101,116 @@ public partial class AddEntryPage : ContentPage
         }
     }
 
+    // ========= МЕТОДИ ЗВИЧАЙНОГО ЗАПОВНЕННЯ ЗАПИСУ ==========
+
+    // Зробити фото через камеру
+    private async void OnTakePhotoClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            // Використовуємо PermissionsHelper
+            if (!await Services.PermissionsHelper.CheckAndRequestCameraPermissionAsync())
+            {
+                return;
+            }
+
+            var photoPath = await _photoService.TakePhotoAsync();
+
+            if (!string.IsNullOrEmpty(photoPath))
+            {
+                await DisplayPhotoPreview(photoPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("❌ Помилка", $"Не вдалося зробити фото: {ex.Message}", "OK");
+        }
+    }
+
+    // Вибрати фото з галереї
+    private async void OnPickPhotoClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            // Використовуємо PermissionsHelper
+            if (!await Services.PermissionsHelper.CheckAndRequestPhotosPermissionAsync())
+            {
+                return;
+            }
+
+            var photoPath = await _photoService.PickPhotoAsync();
+
+            if (!string.IsNullOrEmpty(photoPath))
+            {
+                await DisplayPhotoPreview(photoPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("❌ Помилка", $"Не вдалося вибрати фото: {ex.Message}", "OK");
+        }
+    }
+
+    // Показати прев'ю фото
+    private async Task DisplayPhotoPreview(string photoPath)
+    {
+        try
+        {
+            // Видаляємо попереднє фото, якщо було
+            if (!string.IsNullOrEmpty(_currentPhotoPath) && _currentPhotoPath != photoPath)
+            {
+                _photoService.DeletePhoto(_currentPhotoPath);
+            }
+
+            _currentPhotoPath = photoPath;
+
+            // Показуємо прев'ю
+            PhotoPreview.Source = ImageSource.FromFile(photoPath);
+            PhotoPreviewFrame.IsVisible = true;
+
+            System.Diagnostics.Debug.WriteLine($"✅ Фото встановлено: {photoPath}");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("❌ Помилка", $"Не вдалося показати фото: {ex.Message}", "OK");
+        }
+    }
+
+    // Видалити фото
+    private void OnRemovePhotoClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(_currentPhotoPath))
+            {
+                _photoService.DeletePhoto(_currentPhotoPath);
+                _currentPhotoPath = null;
+            }
+
+            PhotoPreviewFrame.IsVisible = false;
+            PhotoPreview.Source = null;
+        }
+        catch (Exception ex)
+        {
+            DisplayAlert("❌ Помилка", $"Не вдалося видалити фото: {ex.Message}", "OK");
+        }
+    }
+
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        if (Navigation.NavigationStack.Count > 1)
+        {
+            await Navigation.PopAsync();
+        }
+        // Якщо нічого не спрацювало - використовуємо Shell навігацію
+        else
+        {
+            await Shell.Current.GoToAsync("//MainPage");
+        }
+    }
+
+    // ========= AI МЕТОДИ ЗАПОВНЕННЯ ЗАПИСУ ==========
+
     /// <summary>
     /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ 
     /// </summary>
@@ -125,17 +235,10 @@ public partial class AddEntryPage : ContentPage
             // КРОК 2:Отримуємо фото відповідно до вибору
             if (action == "📷 Зробити фото зараз")
             {
-                // Перевірка дозволу на камеру
-                var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
-                if (cameraStatus != PermissionStatus.Granted)
+                //ПЕРЕВІРКА ДОЗВОЛІВ(Android 13 +)
+                if (!await Services.PermissionsHelper.CheckAndRequestCameraPermissionAsync())
                 {
-                    cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
-                    if (cameraStatus != PermissionStatus.Granted)
-                    {
-                        await DisplayAlert("❌ Доступ заборонено",
-                            "Для камери потрібен дозвіл у налаштуваннях", "OK");
-                        return;
-                    }
+                    return; 
                 }
 
                 var photo = await MediaPicker.Default.CapturePhotoAsync();
@@ -147,17 +250,10 @@ public partial class AddEntryPage : ContentPage
             }
             else if (action == "🖼️ Вибрати з галереї")
             {
-                // Перевірка дозволу на галерею
-                var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
-                if (photoStatus != PermissionStatus.Granted)
+                // ПЕРЕВІРКА ДОЗВОЛІВ (Android 13+)
+                if (!await Services.PermissionsHelper.CheckAndRequestPhotosPermissionAsync())
                 {
-                    photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
-                    if (photoStatus != PermissionStatus.Granted)
-                    {
-                        await DisplayAlert("❌ Доступ заборонено",
-                            "Для галереї потрібен дозвіл у налаштуваннях", "OK");
-                        return;
-                    }
+                    return; 
                 }
 
                 var photo = await MediaPicker.Default.PickPhotoAsync();
@@ -395,7 +491,7 @@ public partial class AddEntryPage : ContentPage
                 // КРОК 6: Обробка результату
                 if (result.IsValid)
                 {
-                    // ✅ УСПІХ - автоматично заповнюємо поля
+                    // УСПІХ - автоматично заповнюємо поля
                     DescriptionEntry.Text = result.DishName;
                     CaloriesEntry.Text = result.Calories.ToString("F0");
 
@@ -439,7 +535,7 @@ public partial class AddEntryPage : ContentPage
                 }
                 else
                 {
-                    // ❌ ПОМИЛКА або не розпізнано
+                    // ПОМИЛКА або не розпізнано
                     string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
 
                     await DisplayAlert(
@@ -511,97 +607,5 @@ public partial class AddEntryPage : ContentPage
         }
     }
 
-    // Зробити фото через камеру
-    private async void OnTakePhotoClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            var photoPath = await _photoService.TakePhotoAsync();
-
-            if (!string.IsNullOrEmpty(photoPath))
-            {
-                await DisplayPhotoPreview(photoPath);
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("❌ Помилка", $"Не вдалося зробити фото: {ex.Message}", "OK");
-        }
-    }
-
-    // Вибрати фото з галереї
-    private async void OnPickPhotoClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            var photoPath = await _photoService.PickPhotoAsync();
-
-            if (!string.IsNullOrEmpty(photoPath))
-            {
-                await DisplayPhotoPreview(photoPath);
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("❌ Помилка", $"Не вдалося вибрати фото: {ex.Message}", "OK");
-        }
-    }
-
-    // Показати прев'ю фото
-    private async Task DisplayPhotoPreview(string photoPath)
-    {
-        try
-        {
-            // Видаляємо попереднє фото, якщо було
-            if (!string.IsNullOrEmpty(_currentPhotoPath) && _currentPhotoPath != photoPath)
-            {
-                _photoService.DeletePhoto(_currentPhotoPath);
-            }
-
-            _currentPhotoPath = photoPath;
-
-            // Показуємо прев'ю
-            PhotoPreview.Source = ImageSource.FromFile(photoPath);
-            PhotoPreviewFrame.IsVisible = true;
-
-            System.Diagnostics.Debug.WriteLine($"✅ Фото встановлено: {photoPath}");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("❌ Помилка", $"Не вдалося показати фото: {ex.Message}", "OK");
-        }
-    }
-
-    // Видалити фото
-    private void OnRemovePhotoClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            if (!string.IsNullOrEmpty(_currentPhotoPath))
-            {
-                _photoService.DeletePhoto(_currentPhotoPath);
-                _currentPhotoPath = null;
-            }
-
-            PhotoPreviewFrame.IsVisible = false;
-            PhotoPreview.Source = null;
-        }
-        catch (Exception ex)
-        {
-            DisplayAlert("❌ Помилка", $"Не вдалося видалити фото: {ex.Message}", "OK");
-        }
-    }
-
-    private async void OnCancelClicked(object sender, EventArgs e)
-    {
-        if (Navigation.NavigationStack.Count > 1)
-        {
-            await Navigation.PopAsync();
-        }
-        // Якщо нічого не спрацювало - використовуємо Shell навігацію
-        else
-        {
-            await Shell.Current.GoToAsync("//MainPage");
-        }
-    }
+    
 }
