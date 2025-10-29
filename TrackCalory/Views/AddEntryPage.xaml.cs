@@ -78,6 +78,10 @@ public partial class AddEntryPage : ContentPage
             await dataService.AddEntryAsync(entry);
 
             await DisplayAlert("Успіх! ",$"Запис збережено:\n{entry.Description}\n{entry.Calories:F0} ккал", "Добре");
+            
+            // прибираємо фото з фотопревью
+            PhotoPreviewFrame.IsVisible = false;
+            PhotoPreview.Source = null;
 
             // Спочатку пробуємо закрити модальну сторінку
             if (Navigation.ModalStack.Count > 0)
@@ -156,12 +160,6 @@ public partial class AddEntryPage : ContentPage
     {
         try
         {
-            // Видаляємо попереднє фото, якщо було
-            if (!string.IsNullOrEmpty(_currentPhotoPath) && _currentPhotoPath != photoPath)
-            {
-                _photoService.DeletePhoto(_currentPhotoPath);
-            }
-
             _currentPhotoPath = photoPath;
 
             // Показуємо прев'ю
@@ -181,12 +179,6 @@ public partial class AddEntryPage : ContentPage
     {
         try
         {
-            if (!string.IsNullOrEmpty(_currentPhotoPath))
-            {
-                _photoService.DeletePhoto(_currentPhotoPath);
-                _currentPhotoPath = null;
-            }
-
             PhotoPreviewFrame.IsVisible = false;
             PhotoPreview.Source = null;
         }

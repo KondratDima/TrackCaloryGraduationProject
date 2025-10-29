@@ -118,7 +118,7 @@
             <DatePicker x:Name="DatePicker" FontSize="16"/>
 
             <Label Text="Тип:" FontSize="16"/>
-            <Picker x:Name="Category" Title="Оберіть мету">
+            <Picker x:Name="Category">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Сніданок</x:String>

@@ -5,25 +5,24 @@
 				 android:roundIcon="@mipmap/appicon_round" 
 				 android:supportsRtl="true"
 				 android:theme="@style/MainTheme"
-				 android:extractNativeLibs="true">
+				 android:extractNativeLibs="true"
+				android:requestLegacyExternalStorage="true">
 	</application>
 	
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
 
-	<!-- Дозволи для камери -->
+	<!-- Дозвіл на камеру -->
 	<uses-permission android:name="android.permission.CAMERA" />
-	
-	<!-- дозволи для Android 12 і вижче -->
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	
-	<!-- НОВІ дозволи для Android 13+ (API 33+) -->
+
+	<!-- БЕЗ maxSdkVersion - нехай MediaPicker сам вирішує -->
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+	<!-- Для Android 13+ -->
 	<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-	<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
 	<uses-feature android:name="android.hardware.camera" android:required="false" />
-	<uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
 	<queries>
 		<intent>
