@@ -7,7 +7,7 @@
     xmlns:views="clr-namespace:TrackCalory.Views"
     Title="CalorieTracker"
     Shell.BackgroundColor="#f4becb"
-    Shell.ForegroundColor="#aff3c0"
+    Shell.ForegroundColor="Black"
     Shell.TitleColor="White"
     BackgroundColor="#f4becb"
     TabBarForegroundColor="#f4becb"

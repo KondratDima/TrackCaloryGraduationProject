@@ -7,7 +7,7 @@
              Title="Трекер калорій"
              BackgroundColor="#d6d1d3"
               Shell.BackgroundColor="#f4becb"
-             Shell.ForegroundColor="#aff3c0">
+             Shell.ForegroundColor="Black">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
@@ -145,16 +145,17 @@
         <CollectionView Grid.Row="1" 
                        ItemsSource="{Binding FilteredEntries}"
                        BackgroundColor="#dad7d8"
-                       Margin="0,5,0,0">
+                       Margin="0,4,0,0"
+                       >
             <CollectionView.EmptyView>
-                <StackLayout HorizontalOptions="Center" 
-                            VerticalOptions="Center"
-                            Padding="50">
+                
+                    <StackLayout Margin="0,50,0,0">
                     <Image Source="strawberryv2.png"
                            MaximumHeightRequest="120"
                            Opacity="0.2"
+                           HorizontalOptions="Center"
                         />
-                    <Label Text="Немає записів за цю дату"
+                    <Label Text="Немає заисів за цю дату"
                            Opacity="0.8"
                            FontSize="16"
                            FontAttributes="Italic"
@@ -165,7 +166,8 @@
                            FontSize="10"
                            TextColor="Gray"
                            HorizontalOptions="Center"/>
-                </StackLayout>
+                    </StackLayout>
+              
             </CollectionView.EmptyView>
 
         <!-- Самі списки -->

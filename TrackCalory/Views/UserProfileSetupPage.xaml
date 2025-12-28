@@ -23,7 +23,7 @@
             <Frame BackgroundColor="White" HasShadow="True" CornerRadius="10" Padding="15">
                 <StackLayout>
                     <Label Text="Стать" FontAttributes="Bold"/>
-                    <Picker x:Name="GenderPicker" Title="Оберіть стать">
+                    <Picker x:Name="GenderPicker" Title="Оберіть стать" SelectedItem="Чоловік">
                         <Picker.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Чоловік</x:String>
@@ -68,7 +68,7 @@
             <Frame BackgroundColor="White" HasShadow="True" CornerRadius="10" Padding="15">
                 <StackLayout>
                     <Label Text="Рівень активності" FontAttributes="Bold"/>
-                    <Picker x:Name="ActivityPicker" Title="Оберіть рівень">
+                    <Picker x:Name="ActivityPicker" Title="Оберіть рівень" SelectedItem="Легка активність (1-3 дні/тиждень)">
                         <Picker.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Сидячий спосіб життя</x:String>
@@ -86,8 +86,8 @@
             <Frame BackgroundColor="White" HasShadow="True" CornerRadius="10" Padding="15">
                 <StackLayout>
                     <Label Text="Ваша мета" FontAttributes="Bold"/>
-                    <Picker x:Name="GoalPicker" Title="Оберіть мету">
-                        <Picker.ItemsSource>
+                    <Picker x:Name="GoalPicker" Title="Оберіть мету" SelectedItem="Схуднення">
+                        <Picker.ItemsSource >
                             <x:Array Type="{x:Type x:String}">
                                 <x:String>Схуднення</x:String>
                                 <x:String>Підтримка ваги</x:String>
