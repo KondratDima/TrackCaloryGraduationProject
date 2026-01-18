@@ -47,7 +47,7 @@ namespace TrackCalory.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка отримання записів за дату: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка отримання записів за дату: {ex.Message}");
                 return new List<CalorieEntry>();
             }
         }
@@ -116,43 +116,6 @@ namespace TrackCalory.Services
             }
         }
 
-        // Старий код 
-
-        /*
-        public Dictionary<DateTime, double> GetDailySummary()
-        {
-            return _entries
-                .GroupBy(e => e.Date.Date)
-                .ToDictionary(g => g.Key, g => g.Sum(e => e.Calories));
-        }
-        */
-
-        /*
-        private void LoadSampleData()
-        {
-            // Тимчасові дані для демонстрації
-            _entries.Add(new CalorieEntry
-            {
-                Id = 1,
-                Date = DateTime.Today,
-                Calories = 350,
-                Description = "Сніданок - вівсянка з ягодами"
-            });
-            _entries.Add(new CalorieEntry
-            {
-                Id = 2,
-                Date = DateTime.Today,
-                Calories = 480,
-                Description = "Обід - курка з рисом"
-            });
-            _entries.Add(new CalorieEntry
-            {
-                Id = 3,
-                Date = DateTime.Today.AddDays(-1),
-                Calories = 320,
-                Description = "Вечеря - салат з тунцем"
-            });
-        }
-        */
+        
     }
 }

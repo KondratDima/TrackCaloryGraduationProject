@@ -8,30 +8,27 @@ public partial class App : Application
 	public App()
 	{
 		InitializeComponent();
-
         // примусово світла тема
         Application.Current.UserAppTheme = AppTheme.Light;
         this.RequestedThemeChanged += (s, e) => { Application.Current.UserAppTheme = AppTheme.Light; };
 
-        // ТЕСТ: Перевірка завантаження конфігурації
+#if WINDOWS
+        // Примусово вмикаємо світлу тему для WinUI (нативна частина — title bar тощо)
         try
         {
-            var configService = new Services.ConfigurationService();
-            bool hasKey = configService.IsApiKeyConfigured();
-            System.Diagnostics.Debug.WriteLine($"✅ API ключ налаштований: {hasKey}");
+            Microsoft.UI.Xaml.Application.Current.RequestedTheme = Microsoft.UI.Xaml.ApplicationTheme.Light;
         }
-        catch (Exception ex)
+        catch
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Помилка конфігурації: {ex.Message}");
+            // Якщо з якоїсь причини не доступно — ігноруємо без падіння
         }
-
+#endif
 
         MainPage = new AppShell();
 
         CheckUserProfile();
 
 #if WINDOWS
-        // Без застарілих методів
         Dispatcher.Dispatch(async () =>
         {
             await Task.Delay(500);
@@ -56,21 +53,15 @@ public partial class App : Application
 
             if (!hasProfile)
             {
-
                 // Створюємо сторінку налаштування профілю
                 var setupPage = new Views.UserProfileSetupPage(databaseService);
                 // Створюємо NavigationPage, використовуючи створену сторінку
                 var navigationPage = new NavigationPage(setupPage);
-                // Встановлюємо рожевий колір для панелі навігації (заголовка)
+                // Встановлюємо рожевий колір для панелі навігації
                 navigationPage.BarBackgroundColor = Color.FromArgb("#f4becb");
-                // За бажанням, можна встановити колір тексту заголовка (наприклад, білий)
-                navigationPage.BarTextColor = Colors.White;
+                // колір тексту заголовка 
+                navigationPage.BarTextColor = Colors.Black;
                 MainPage = navigationPage;
-
-                /*
-                // Якщо профілю немає - показуємо форму налаштування
-                MainPage = new NavigationPage(new Views.UserProfileSetupPage(databaseService));
-                */
             }
             else
             {

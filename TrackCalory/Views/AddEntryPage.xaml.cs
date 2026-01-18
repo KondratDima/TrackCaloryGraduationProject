@@ -187,7 +187,7 @@ public partial class AddEntryPage : ContentPage
             DisplayAlert("❌ Помилка", $"Не вдалося видалити фото: {ex.Message}", "OK");
         }
     }
-
+    // перехід на MainPage
     private async void OnCancelClicked(object sender, EventArgs e)
     {
         if (Navigation.NavigationStack.Count > 1)
@@ -201,11 +201,11 @@ public partial class AddEntryPage : ContentPage
         }
     }
 
+
+
     // ========= AI МЕТОДИ ЗАПОВНЕННЯ ЗАПИСУ ==========
 
-    /// <summary>
-    /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ 
-    /// </summary>
+    /// <summary> /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ /// </summary>
     public async void OnAnalyzePhotoClicked(object sender, EventArgs e)
     {
         try
@@ -407,7 +407,7 @@ public partial class AddEntryPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"❌ Outer exception: {ex}");
         }
     }
-
+    // Тут при передачі фото з головної сторінки записується і запускається OnAnalyzePhotoFromMainPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -422,7 +422,6 @@ public partial class AddEntryPage : ContentPage
             OnAnalyzePhotoFromMainPage(photoPath);
         }
     }
-
     public async void OnAnalyzePhotoFromMainPage(string photoPathToAnalyze)
     {
         try
@@ -566,6 +565,7 @@ public partial class AddEntryPage : ContentPage
             System.Diagnostics.Debug.WriteLine($"❌ Outer exception: {ex}");
         }
     }
+
 
     // Допоміжний метод збереження фото 
     private async Task<string> SavePhotoAsync(FileResult photo)

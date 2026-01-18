@@ -7,7 +7,7 @@
              Title="Трекер калорій"
              BackgroundColor="#d6d1d3"
               Shell.BackgroundColor="#f4becb"
-             Shell.ForegroundColor="Black">
+             Shell.ForegroundColor="#f4becb">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>

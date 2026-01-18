@@ -7,9 +7,7 @@
     xmlns:views="clr-namespace:TrackCalory.Views"
     Title="CalorieTracker"
     Shell.BackgroundColor="#f4becb"
-    Shell.ForegroundColor="Black"
     Shell.TitleColor="White"
-    BackgroundColor="#f4becb"
     TabBarForegroundColor="#f4becb"
     >
 
@@ -24,5 +22,8 @@
     <ShellContent Title="Налаштування"
                   ContentTemplate="{DataTemplate views:UserProfileSetupPage}"
                   Route="UserProfileSetupPage"/>
-    
+    <ShellContent Title="О додатку"
+              ContentTemplate="{DataTemplate views:Info}"
+              Route="Info"/>
+
 </Shell>

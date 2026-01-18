@@ -87,7 +87,7 @@ namespace TrackCalory.Services
                 // Gemini API приймає зображення ТІЛЬКИ у такому форматі
                 string base64Image = Convert.ToBase64String(imageBytes);
 
-                System.Diagnostics.Debug.WriteLine($"📤 Відправляємо {base64Image.Length} символів Base64...");
+                System.Diagnostics.Debug.WriteLine($"Відправляємо {base64Image.Length} символів Base64...");
 
                 // КРОК 2: Формуємо тіло запиту
                 // Структура Gemini API: contents → parts → [text, inline_data]
@@ -167,7 +167,7 @@ namespace TrackCalory.Services
                 // КРОК 8: Очищаємо від markdown (```json ... ```)
                 textResponse = CleanJsonResponse(textResponse);
 
-                System.Diagnostics.Debug.WriteLine($"🤖 AI відповідь: {textResponse.Substring(0, Math.Min(150, textResponse.Length))}...");
+                System.Diagnostics.Debug.WriteLine($"AI відповідь: {textResponse.Substring(0, Math.Min(150, textResponse.Length))}...");
 
                 // КРОК 9: Парсимо JSON результат
                 var result = JsonConvert.DeserializeObject<FoodAnalysisResult>(textResponse);

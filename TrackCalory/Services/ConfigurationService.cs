@@ -37,7 +37,6 @@ namespace TrackCalory.Services
                 // Отримуємо поточну збірку (Assembly)
                 var assembly = Assembly.GetExecutingAssembly();
 
-                // Повна назва ресурсу: TrackCalory.appsettings.json
                 string resourceName = "TrackCalory.appsettings.json";
 
                 // Відкриваємо потік для читання
@@ -57,8 +56,8 @@ namespace TrackCalory.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка завантаження конфігурації: {ex.Message}");
-                throw new Exception("Не вдалося завантажити appsettings.json. Перевірте чи файл додано як EmbeddedResource.");
+                System.Diagnostics.Debug.WriteLine($"Помилка завантаження конфігурації: {ex.Message}");
+                throw new Exception("Не вдалося завантажити appsettings.json.");
             }
         }
 
@@ -112,22 +111,5 @@ namespace TrackCalory.Services
             return int.TryParse(maxStr, out int max) ? max : 1024;
         }
 
-        /// <summary>
-        /// Перевіряє чи налаштовано API ключ
-        /// </summary>
-        public bool IsApiKeyConfigured()
-        {
-            try
-            {
-                string apiKey = _configuration["GeminiApiSettings"]?["ApiKey"]?.ToString();
-                return !string.IsNullOrWhiteSpace(apiKey) &&
-                       apiKey != "YOUR_GEMINI_API_KEY_HERE" &&
-                       apiKey.StartsWith("AIza");
-            }
-            catch
-            {
-                return false;
-            }
-        }
     }
 }

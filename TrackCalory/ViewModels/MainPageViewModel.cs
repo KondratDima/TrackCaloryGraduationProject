@@ -45,8 +45,7 @@ namespace TrackCalory.ViewModels
                 DetailCommand = new Command<CalorieEntry>(async (entry) => await OpenEntryDetails(entry));
                 RefreshCommand = new Command(async () => await RefreshDataAsync());
                 AddEntryAICommand = new Command(async () => await AddEntryAI());
-
-                // НОВІ КОМАНДИ для роботи з датами
+                // Команди для роботи з датами
                 PreviousDayCommand = new Command(async () => await GoToPreviousDay());
                 NextDayCommand = new Command(async () => await GoToNextDay());
                 ShowDatePickerCommand = new Command(async () => await ShowDatePicker());
@@ -59,7 +58,7 @@ namespace TrackCalory.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка ініціалізації сервісів: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка ініціалізації сервісів: {ex.Message}");
             }
         }
 
@@ -67,7 +66,7 @@ namespace TrackCalory.ViewModels
 
         public ObservableCollection<CalorieEntry> Entries { get; private set; }
 
-        // НОВА КОЛЕКЦІЯ: записи тільки за вибрану дату
+        // КОЛЕКЦІЯ записи тільки за вибрану дату
         public ObservableCollection<CalorieEntry> FilteredEntries
         {
             get => _filteredEntries;
@@ -78,7 +77,7 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        // НОВІ ВЛАСТИВОСТІ для роботи з датами
+        //ВЛАСТИВОСТІ для роботи з датами
         public DateTime SelectedDate
         {
             get => _selectedDate;
@@ -128,13 +127,10 @@ namespace TrackCalory.ViewModels
         }
 
         // ========== КОМАНДИ ==========
-
         public ICommand AddEntryAICommand { get; private set; }
         public ICommand AddEntryCommand { get; private set; }
         public ICommand DetailCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
-
-        // НОВІ КОМАНДИ
         public ICommand PreviousDayCommand { get; private set; }
         public ICommand NextDayCommand { get; private set; }
         public ICommand ShowDatePickerCommand { get; private set; }
@@ -243,7 +239,7 @@ namespace TrackCalory.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка показу DatePicker: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка показу DatePicker: {ex.Message}");
             }
 
         }
@@ -428,15 +424,15 @@ namespace TrackCalory.ViewModels
                 // КРОК 3: Перевірка наявності фото
                 if (string.IsNullOrEmpty(photoPathToAnalyze))
                 {
-                    await Application.Current.MainPage.DisplayAlert("⚠️ Помилка", "Не вдалося отримати фото для аналізу", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Помилка", "Не вдалося отримати фото для аналізу", "OK");
                     return;
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка швидкого розпізнавання: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка швидкого розпізнавання: {ex.Message}");
                 await Application.Current.MainPage.DisplayAlert(
-                    "❌ Помилка",
+                    "омилка",
                     $"Не вдалося розпізнати: {ex.Message}",
                     "OK");
             }
@@ -486,7 +482,7 @@ namespace TrackCalory.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка відкриття деталей: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка відкриття деталей: {ex.Message}");
             }
         }
 

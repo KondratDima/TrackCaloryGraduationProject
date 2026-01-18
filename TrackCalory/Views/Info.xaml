@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TrackCalory.Views.Info"
+             Title="Info">
+    <VerticalStackLayout Padding="15">
+        <HorizontalStackLayout HorizontalOptions="Center" >
+            <Label 
+            Text="Вас вітає"
+            VerticalOptions="Center" 
+            HorizontalOptions="End"
+            Padding="15"/>
+            <Label 
+                Text="Track Calory"
+                VerticalOptions="Center" 
+                TextColor="#5fd37c"
+                FontAttributes="Bold"
+                Padding="0"/>
+        </HorizontalStackLayout>
+        <VerticalStackLayout VerticalOptions="EndAndExpand">
+        <Frame BackgroundColor="#f7d9e0"
+       CornerRadius="10" Padding="15"  >
+                <VerticalStackLayout Padding="5" >
+                <Label Text="Розробник :Кондрат Дмиро Олексійович"
+            FontSize="14"
+            TextColor="Black"/>
+            </VerticalStackLayout>
+        </Frame>
+        <Frame BackgroundColor="#f7d9e0"
+                CornerRadius="10" Padding="15" Margin="0,5,0,0">
+            <VerticalStackLayout Padding="5">
+                <Label Text="Учень 11-В класу ліцею інформаційних технологій "
+                     FontSize="14"
+                     TextColor="Black"/>
+                    <Label Text="email: axaxoma4@gmailc.com"
+                         FontSize="14"
+                         TextColor="Black"/>
+                </VerticalStackLayout>
+        </Frame>
+        <Label Text="Дніпро"
+            FontSize="14"
+            TextColor="Black"
+               HorizontalOptions="CenterAndExpand"/>
+        <Label Text="2025"
+            FontSize="14"
+            TextColor="Black"
+            HorizontalOptions="CenterAndExpand"/>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>

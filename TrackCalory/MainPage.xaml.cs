@@ -17,7 +17,7 @@ namespace TrackCalory
             if (BindingContext is MainPageViewModel viewModel)
             {
                 await Task.Delay(100);
-                await viewModel.RefreshDataAsync();
+                //await viewModel.RefreshDataAsync();
                 await Task.Delay(50);
                 this.ForceLayout();
             }
