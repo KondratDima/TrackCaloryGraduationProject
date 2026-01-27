@@ -2,6 +2,7 @@ using SQLite;
 
 namespace TrackCalory.Models
 {
+    // Це МОДЕЛЬ ТАБЛИЦЯ - описує, як виглядає профіль користувача
     [Table("UserProfile")]
     public class UserProfile
     {

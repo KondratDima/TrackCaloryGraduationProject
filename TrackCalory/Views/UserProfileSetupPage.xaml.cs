@@ -15,6 +15,9 @@ public partial class UserProfileSetupPage : ContentPage
         _calculationService = new CalorieCalculationService();
     }
 
+    /// <summary>
+    /// Кнопка розрахунку та збереження профілю користувача 
+    /// </summary>
     private async void OnCalculateClicked(object sender, EventArgs e)
     {
         try

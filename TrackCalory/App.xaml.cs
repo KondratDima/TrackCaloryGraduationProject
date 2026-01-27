@@ -12,18 +12,6 @@ public partial class App : Application
         Application.Current.UserAppTheme = AppTheme.Light;
         this.RequestedThemeChanged += (s, e) => { Application.Current.UserAppTheme = AppTheme.Light; };
 
-#if WINDOWS
-        // Примусово вмикаємо світлу тему для WinUI (нативна частина — title bar тощо)
-        try
-        {
-            Microsoft.UI.Xaml.Application.Current.RequestedTheme = Microsoft.UI.Xaml.ApplicationTheme.Light;
-        }
-        catch
-        {
-            // Якщо з якоїсь причини не доступно — ігноруємо без падіння
-        }
-#endif
-
         MainPage = new AppShell();
 
         CheckUserProfile();
@@ -40,7 +28,18 @@ public partial class App : Application
         });
 #endif
 
-        
+#if WINDOWS
+        // Примусово вмикаємо світлу тему для WinUI (нативна частина — title bar тощо)
+        try
+        {
+            Microsoft.UI.Xaml.Application.Current.RequestedTheme = Microsoft.UI.Xaml.ApplicationTheme.Light;
+        }
+        catch
+        {
+        }
+#endif
+
+
     }
     private async void CheckUserProfile()
     {

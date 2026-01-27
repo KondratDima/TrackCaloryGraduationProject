@@ -7,9 +7,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
+
+/// <summary>
+/// клас передачі путі фото до AddEntryPage
+/// </summary>
 public static class NavigationHelper
 {
-    public static string PendingPhotoPath { get; set; } // клас передачі путі фото до AddEntryPage
+    public static string PendingPhotoPath { get; set; }
 }
 
 namespace TrackCalory.ViewModels
@@ -30,6 +34,9 @@ namespace TrackCalory.ViewModels
             InitializeServices();
         }
 
+        /// <summary>
+        /// Завантажуємо сервіси та ініціалізуємо команди
+        /// </summary>
         private void InitializeServices()
         {
             try
@@ -61,6 +68,7 @@ namespace TrackCalory.ViewModels
                 System.Diagnostics.Debug.WriteLine($"Помилка ініціалізації сервісів: {ex.Message}");
             }
         }
+
 
         // ========== ВЛАСТИВОСТІ ==========
 
@@ -109,6 +117,7 @@ namespace TrackCalory.ViewModels
             }
         }
 
+        /// Показує індикатор дати (сьогодні, вчора, завтра, через N днів тощо)
         public string DateIndicator
         {
             get
@@ -125,6 +134,7 @@ namespace TrackCalory.ViewModels
                 };
             }
         }
+
 
         // ========== КОМАНДИ ==========
         public ICommand AddEntryAICommand { get; private set; }
@@ -149,7 +159,9 @@ namespace TrackCalory.ViewModels
             SelectedDate = SelectedDate.AddDays(1);
         }
 
-
+        /// <summary>
+        /// Створення та показ DatePicker для вибору дати
+        /// </summary>
         private async Task ShowDatePicker()
         {
             try
@@ -271,14 +283,15 @@ namespace TrackCalory.ViewModels
                 // Оновлюємо добову норму колорій
                 UpdateRemainingCalories();
 
-                System.Diagnostics.Debug.WriteLine($"✅ Завантажено {FilteredEntries.Count} записів за {SelectedDate:dd.MM.yyyy}. Калорій: {SelectedDateCalories}");
+                System.Diagnostics.Debug.WriteLine($"Завантажено {FilteredEntries.Count} записів за {SelectedDate:dd.MM.yyyy}. Калорій: {SelectedDateCalories}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка завантаження даних за дату: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка завантаження даних за дату: {ex.Message}");
                 SelectedDateCalories = 0;
             }
         }
+
         // ========== ДОБОВА КОЛОРІЙНІСТЬ ==========
         private double _dailyGoal;
         private double _remainingCalories;
@@ -355,6 +368,9 @@ namespace TrackCalory.ViewModels
 
         // ========== ОСНОВНІ МЕТОДИ ==========
 
+        /// <summary>
+        /// Переходимо до сторні додавання нового запису
+        /// </summary>
         private async Task AddEntry()
         {
             try
@@ -438,8 +454,10 @@ namespace TrackCalory.ViewModels
             }
 
         }
-        // Допоміжний метод збереження фото 
-        
+
+        /// <summary>
+        /// Допоміжний метод збереження фото 
+        /// </summary>
         private async Task<string> SavePhotoAsync(FileResult photo)
         {
             if (photo == null) return null;
@@ -461,16 +479,20 @@ namespace TrackCalory.ViewModels
                     await sourceStream.CopyToAsync(fileStream);
                 }
 
-                System.Diagnostics.Debug.WriteLine($"✅ Фото збережено: {filePath}");
+                System.Diagnostics.Debug.WriteLine($"Фото збережено: {filePath}");
                 return filePath;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка збереження: {ex}");
+                System.Diagnostics.Debug.WriteLine($"Помилка збереження: {ex}");
                 return null;
             }
         }
 
+
+        /// <summary>
+        /// Відкриваємо сторіну деталей за конкретним записом
+        /// </summary>
         private async Task OpenEntryDetails(CalorieEntry entry)
         {
             try
@@ -486,6 +508,9 @@ namespace TrackCalory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Оновлюємо усі данні
+        /// </summary>
         public async Task RefreshDataAsync()
         {
             try
@@ -506,7 +531,10 @@ namespace TrackCalory.ViewModels
             }
         }
 
+
+
         // Допоміжний метод оновлення данних (загальний)
+        // механізм для повідомлення UI про зміни даних у ViewModel.
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {

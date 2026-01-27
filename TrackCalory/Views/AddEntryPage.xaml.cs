@@ -8,9 +8,8 @@ namespace TrackCalory.Views;
 public partial class AddEntryPage : ContentPage
 {
     private readonly PhotoService _photoService;
-    private readonly CalorieDataService _dataService;
-    private string _currentPhotoPath;
     private readonly GeminiVisionService _geminiService;
+    private string _currentPhotoPath;
 
 
     public AddEntryPage()
@@ -19,12 +18,10 @@ public partial class AddEntryPage : ContentPage
 
         // Отримуємо сервіси
         _photoService = App.Current.Handler.MauiContext.Services.GetService<PhotoService>();
+        _geminiService = App.Current.Handler.MauiContext.Services.GetService<GeminiVisionService>();
 
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
         var databaseService = new DatabaseService(dbPath);
-        _dataService = new CalorieDataService(databaseService);
-
-        _geminiService = App.Current.Handler.MauiContext.Services.GetService<GeminiVisionService>();
 
         DatePicker.Date = DateTime.Today;
         Category.SelectedIndex = 0; // За замовчуванням "Сніданок"
@@ -40,14 +37,14 @@ public partial class AddEntryPage : ContentPage
             // Валідація
             if (string.IsNullOrWhiteSpace(DescriptionEntry.Text))
             {
-                await DisplayAlert("⚠️ Помилка", "Введіть опис страви", "OK");
+                await DisplayAlert("Помилка", "Введіть опис страви", "OK");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(CaloriesEntry.Text) ||
                 !double.TryParse(CaloriesEntry.Text, out double calories))
             {
-                await DisplayAlert("⚠️ Помилка", "Введіть коректну кількість калорій", "OK");
+                await DisplayAlert("Помилка", "Введіть коректну кількість калорій", "OK");
                 return;
             }
 
@@ -105,8 +102,8 @@ public partial class AddEntryPage : ContentPage
         }
     }
 
-    // ========= МЕТОДИ ЗВИЧАЙНОГО ЗАПОВНЕННЯ ЗАПИСУ ==========
 
+    // ========= МЕТОДИ ЗВИЧАЙНОГО ЗАПОВНЕННЯ ЗАПИСУ ==========
     // Зробити фото через камеру
     private async void OnTakePhotoClicked(object sender, EventArgs e)
     {
@@ -127,7 +124,7 @@ public partial class AddEntryPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("❌ Помилка", $"Не вдалося зробити фото: {ex.Message}", "OK");
+            await DisplayAlert("Помилка", $"Не вдалося зробити фото: {ex.Message}", "OK");
         }
     }
 
@@ -151,11 +148,11 @@ public partial class AddEntryPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("❌ Помилка", $"Не вдалося вибрати фото: {ex.Message}", "OK");
+            await DisplayAlert("Помилка", $"Не вдалося вибрати фото: {ex.Message}", "OK");
         }
     }
 
-    // Показати прев'ю фото
+    // Показати прев'ю фото , також зберігає шлях до фото у _currentPhotoPath
     private async Task DisplayPhotoPreview(string photoPath)
     {
         try
@@ -166,15 +163,15 @@ public partial class AddEntryPage : ContentPage
             PhotoPreview.Source = ImageSource.FromFile(photoPath);
             PhotoPreviewFrame.IsVisible = true;
 
-            System.Diagnostics.Debug.WriteLine($"✅ Фото встановлено: {photoPath}");
+            System.Diagnostics.Debug.WriteLine($"Фото встановлено: {photoPath}");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("❌ Помилка", $"Не вдалося показати фото: {ex.Message}", "OK");
+            await DisplayAlert("Помилка", $"Не вдалося показати фото: {ex.Message}", "OK");
         }
     }
 
-    // Видалити фото
+    // Видалити фото з прев'ю
     private void OnRemovePhotoClicked(object sender, EventArgs e)
     {
         try
@@ -184,9 +181,10 @@ public partial class AddEntryPage : ContentPage
         }
         catch (Exception ex)
         {
-            DisplayAlert("❌ Помилка", $"Не вдалося видалити фото: {ex.Message}", "OK");
+            DisplayAlert("Помилка", $"Не вдалося видалити фото: {ex.Message}", "OK");
         }
     }
+
     // перехід на MainPage
     private async void OnCancelClicked(object sender, EventArgs e)
     {
@@ -203,9 +201,10 @@ public partial class AddEntryPage : ContentPage
 
 
 
-    // ========= AI МЕТОДИ ЗАПОВНЕННЯ ЗАПИСУ ==========
-
-    /// <summary> /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ /// </summary>
+    // ========= AI МЕТОД ЗАПОВНЕННЯ ЗАПИСУ ==========
+    /// <summary> 
+    /// РОБИТЬ АНАЛІЗ ФОТО , ЗАПОВНЮЄ ПОЛЯ 
+    /// </summary>
     public async void OnAnalyzePhotoClicked(object sender, EventArgs e)
     {
         try
@@ -227,7 +226,7 @@ public partial class AddEntryPage : ContentPage
             // КРОК 2:Отримуємо фото відповідно до вибору
             if (action == "📷 Зробити фото зараз")
             {
-                //ПЕРЕВІРКА ДОЗВОЛІВ(Android 13 +)
+                //ПЕРЕВІРКА ДОЗВОЛІВ(Android 13 +) з PermissionsHelper
                 if (!await Services.PermissionsHelper.CheckAndRequestCameraPermissionAsync())
                 {
                     return; 
@@ -240,9 +239,10 @@ public partial class AddEntryPage : ContentPage
                     await DisplayPhotoPreview(photoPathToAnalyze);
                 }
             }
+
             else if (action == "🖼️ Вибрати з галереї")
             {
-                // ПЕРЕВІРКА ДОЗВОЛІВ (Android 13+)
+                // ПЕРЕВІРКА ДОЗВОЛІВ (Android 13+) з PermissionsHelper
                 if (!await Services.PermissionsHelper.CheckAndRequestPhotosPermissionAsync())
                 {
                     return; 
@@ -255,6 +255,7 @@ public partial class AddEntryPage : ContentPage
                     await DisplayPhotoPreview(photoPathToAnalyze);
                 }
             }
+
             else if (action == "✅ Використати поточне фото")
             {
                 // Використовуємо вже завантажене фото
@@ -268,7 +269,7 @@ public partial class AddEntryPage : ContentPage
                 return;
             }
 
-            // ДУЖЕ ВАЖНО Чекаємо 100мс щоб Android завершив збереження стану після MediaPicker
+            //  Чекаємо 100мс щоб Android завершив збереження стану після MediaPicker
             await Task.Delay(100);
 
             // КРОК 4: Показуємо індикатор завантаження
@@ -313,166 +314,7 @@ public partial class AddEntryPage : ContentPage
             try
             {
                 // КРОК 5: Відправляємо фото на аналіз до Gemini
-                System.Diagnostics.Debug.WriteLine($"🚀 Відправляємо фото на аналіз: {photoPathToAnalyze}");
-
-                var result = await _geminiService.AnalyzeFoodFromPathAsync(photoPathToAnalyze);
-
-                // Закриваємо індикатор
-                await Navigation.PopModalAsync(false);
-
-                // КРОК 6: Обробка результату
-                if (result.IsValid)
-                {
-                    // ✅ УСПІХ - автоматично заповнюємо поля
-                    DescriptionEntry.Text = result.DishName;
-                    CaloriesEntry.Text = result.Calories.ToString("F0");
-
-                    if (result.Protein.HasValue)
-                        ProteinEntry.Text = result.Protein.Value.ToString("F1");
-
-                    if (result.Fat.HasValue)
-                        FatEntry.Text = result.Fat.Value.ToString("F1");
-
-                    if (result.Carbs.HasValue)
-                        CarbsEntry.Text = result.Carbs.Value.ToString("F1");
-
-                    // Формуємо повідомлення для користувача
-                    string message = $"✅ AI успішно розпізнав страву!\n\n";
-                    message += $"🍽️ Страва: {result.DishName}\n";
-                    message += $"🔥 Калорії: {result.Calories:F0} ккал\n";
-
-                    if (result.Weight.HasValue)
-                        message += $"⚖️ Вага: ~{result.Weight:F0} г\n";
-
-                    if (result.Protein.HasValue || result.Fat.HasValue || result.Carbs.HasValue)
-                    {
-                        message += $"\n📊 БЖВ:\n";
-                        message += $"  • Білки: {result.Protein:F1} г\n";
-                        message += $"  • Жири: {result.Fat:F1} г\n";
-                        message += $"  • Вуглеводи: {result.Carbs:F1} г\n";
-                    }
-
-                    if (result.Confidence.HasValue)
-                    {
-                        string confidenceEmoji = result.Confidence.Value >= 0.8 ? "🎯" :
-                                                result.Confidence.Value >= 0.6 ? "⚠️" : "❓";
-                        message += $"\n{confidenceEmoji} Впевненість AI: {result.Confidence:P0}";
-                    }
-
-                    message += "\n\n💡 Перевірте дані та збережіть запис.";
-
-                    await DisplayAlert("🤖 AI Розпізнавання", message, "Добре");
-
-                    System.Diagnostics.Debug.WriteLine($"✅ Розпізнано: {result.DishName}, {result.Calories} ккал");
-                }
-                else
-                {
-                    // ❌ ПОМИЛКА або не розпізнано
-                    string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
-
-                    await DisplayAlert(
-                        "⚠️ Не вдалося розпізнати",
-                        $"{errorMessage}\n\n" +
-                        "Можливі причини:\n" +
-                        "• На фото немає їжі\n" +
-                        "• Фото нечітке або темне\n" +
-                        "• Перевищено ліміт API (15 запитів/хв)\n\n" +
-                        "💡 Спробуйте зробити інше фото або введіть дані вручну.",
-                        "OK");
-
-                    System.Diagnostics.Debug.WriteLine($"❌ Не розпізнано: {errorMessage}");
-                }
-            }
-            catch (Exception ex)
-            {
-                // Закриваємо індикатор у разі помилки
-                await Navigation.PopModalAsync(false);
-
-                await DisplayAlert(
-                    "❌ Помилка",
-                    $"Не вдалося проаналізувати фото:\n{ex.Message}\n\n" +
-                    "Перевірте:\n" +
-                    "• Інтернет-з'єднання\n" +
-                    "• Налаштування API ключа\n" +
-                    "• Якість фото",
-                    "OK");
-
-                System.Diagnostics.Debug.WriteLine($"❌ Exception в аналізі: {ex}");
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("❌ Помилка",
-                $"Непередбачена помилка: {ex.Message}", "OK");
-            System.Diagnostics.Debug.WriteLine($"❌ Outer exception: {ex}");
-        }
-    }
-    // Тут при передачі фото з головної сторінки записується і запускається OnAnalyzePhotoFromMainPage
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        // Перевіряємо чи є фото для аналізу
-        if (!string.IsNullOrEmpty(NavigationHelper.PendingPhotoPath))
-        {
-            var photoPath = NavigationHelper.PendingPhotoPath;
-            NavigationHelper.PendingPhotoPath = null; // Очищаємо після використання
-
-            await Task.Delay(200); // Даємо час на завантаження UI
-            OnAnalyzePhotoFromMainPage(photoPath);
-        }
-    }
-    public async void OnAnalyzePhotoFromMainPage(string photoPathToAnalyze)
-    {
-        try
-        {
-            // ДУЖЕ ВАЖНО Чекаємо 100мс щоб Android завершив збереження стану після MediaPicker
-            await Task.Delay(100);
-            await DisplayPhotoPreview(photoPathToAnalyze);
-
-            // КРОК 4: Показуємо індикатор завантаження
-            var loadingPopup = new ContentPage
-            {
-                BackgroundColor = Color.FromRgba(0, 0, 0, 0.7),
-                Content = new VerticalStackLayout
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    HorizontalOptions = LayoutOptions.Center,
-                    Spacing = 20,
-                    Children =
-                {
-                    new ActivityIndicator
-                    {
-                        IsRunning = true,
-                        Color = Colors.White,
-                        WidthRequest = 60,
-                        HeightRequest = 60
-                    },
-                    new Label
-                    {
-                        Text = "🤖 Аналізую фото через AI...",
-                        TextColor = Colors.White,
-                        FontSize = 20,
-                        FontAttributes = FontAttributes.Bold,
-                        HorizontalOptions = LayoutOptions.Center
-                    },
-                    new Label
-                    {
-                        Text = "Це займе 5-15 секунд",
-                        TextColor = Colors.LightGray,
-                        FontSize = 14,
-                        HorizontalOptions = LayoutOptions.Center
-                    }
-                }
-                }
-            };
-
-            await Navigation.PushModalAsync(loadingPopup, false);
-
-            try
-            {
-                // КРОК 5: Відправляємо фото на аналіз до Gemini
-                System.Diagnostics.Debug.WriteLine($"🚀 Відправляємо фото на аналіз: {photoPathToAnalyze}");
+                System.Diagnostics.Debug.WriteLine($"Відправляємо фото на аналіз : {photoPathToAnalyze} ");
 
                 var result = await _geminiService.AnalyzeFoodFromPathAsync(photoPathToAnalyze);
 
@@ -522,8 +364,176 @@ public partial class AddEntryPage : ContentPage
 
                     await DisplayAlert("🤖 AI Розпізнавання", message, "Добре");
 
+                    System.Diagnostics.Debug.WriteLine($"Розпізнано: {result.DishName}, {result.Calories} ккал");
+                }
+                else
+                {
+                    // ❌ ПОМИЛКА або не розпізнано
+                    string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
+
+                    await DisplayAlert(
+                        "⚠️ Не вдалося розпізнати",
+                        $"{errorMessage}\n\n" +
+                        "Можливі причини:\n" +
+                        "• На фото немає їжі\n" +
+                        "• Фото нечітке або темне\n" +
+                        "• Перевищено ліміт API (15 запитів/хв)\n\n" +
+                        "💡 Спробуйте зробити інше фото або введіть дані вручну.",
+                        "OK");
+
+                    System.Diagnostics.Debug.WriteLine($"Не розпізнано: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Закриваємо індикатор у разі помилки
+                await Navigation.PopModalAsync(false);
+
+                await DisplayAlert(
+                    "❌ Помилка",
+                    $"Не вдалося проаналізувати фото:\n{ex.Message}\n\n" +
+                    "Перевірте:\n" +
+                    "• Інтернет-з'єднання\n" +
+                    "• Налаштування API ключа\n" +
+                    "• Якість фото",
+                    "OK");
+
+                System.Diagnostics.Debug.WriteLine($"Exception : {ex}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("❌ Помилка",
+                $"Непередбачена помилка: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
+        }
+    }
+
+
+    // ========= АНАЛІЗ ФОТО З ГОЛОВНОЇ СТОРІНКИ =========
+    /// <summary>
+    /// Тут при передачі фото з головної сторінки записується і запускається OnAnalyzePhotoFromMainPage
+    /// </summary>
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Перевіряємо чи є фото для аналізу
+        if (!string.IsNullOrEmpty(NavigationHelper.PendingPhotoPath)) // NavigationHelper з MainPageViewModel.cs
+        {
+            var photoPath = NavigationHelper.PendingPhotoPath;
+            NavigationHelper.PendingPhotoPath = null; // Очищаємо після використання
+
+            await Task.Delay(200); // Даємо час на завантаження UI
+            OnAnalyzePhotoFromMainPage(photoPath);
+        }
+    }
+    /// <summary>
+    /// Аналізує фото передане з головної сторінки
+    /// </summary>
+    public async void OnAnalyzePhotoFromMainPage(string photoPathToAnalyze)
+    {
+        try
+        {
+            // Чекаємо 100мс щоб Android завершив збереження стану після MediaPicker
+            await Task.Delay(100);
+            await DisplayPhotoPreview(photoPathToAnalyze);
+
+            // КРОК 1: Показуємо індикатор завантаження
+            var loadingPopup = new ContentPage
+            {
+                BackgroundColor = Color.FromRgba(0, 0, 0, 0.7),
+                Content = new VerticalStackLayout
+                {
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Spacing = 20,
+                    Children =
+                {
+                    new ActivityIndicator
+                    {
+                        IsRunning = true,
+                        Color = Colors.White,
+                        WidthRequest = 60,
+                        HeightRequest = 60
+                    },
+                    new Label
+                    {
+                        Text = "🤖 Аналізую фото через AI...",
+                        TextColor = Colors.White,
+                        FontSize = 20,
+                        FontAttributes = FontAttributes.Bold,
+                        HorizontalOptions = LayoutOptions.Center
+                    },
+                    new Label
+                    {
+                        Text = "Це займе 5-15 секунд",
+                        TextColor = Colors.LightGray,
+                        FontSize = 14,
+                        HorizontalOptions = LayoutOptions.Center
+                    }
+                }
+                }
+            };
+
+            await Navigation.PushModalAsync(loadingPopup, false);
+
+            try
+            {
+                // КРОК 2: Відправляємо фото на аналіз до Gemini
+                System.Diagnostics.Debug.WriteLine($" - Відправляємо фото на аналіз: {photoPathToAnalyze}");
+
+                var result = await _geminiService.AnalyzeFoodFromPathAsync(photoPathToAnalyze);
+
+                // Закриваємо індикатор
+                await Navigation.PopModalAsync(false);
+
+                // КРОК 3: Обробка результату
+                if (result.IsValid)
+                {
+                    // УСПІХ - автоматично заповнюємо поля
+                    DescriptionEntry.Text = result.DishName;
+                    CaloriesEntry.Text = result.Calories.ToString("F0");
+
+                    if (result.Protein.HasValue)
+                        ProteinEntry.Text = result.Protein.Value.ToString("F1");
+
+                    if (result.Fat.HasValue)
+                        FatEntry.Text = result.Fat.Value.ToString("F1");
+
+                    if (result.Carbs.HasValue)
+                        CarbsEntry.Text = result.Carbs.Value.ToString("F1");
+
+                    // Формуємо повідомлення для користувача
+                    string message = $"✅ AI успішно розпізнав страву!\n\n";
+                    message += $"🍽️ Страва: {result.DishName}\n";
+                    message += $"🔥 Калорії: {result.Calories:F0} ккал\n";
+
+                    if (result.Weight.HasValue)
+                        message += $"⚖️ Вага: ~{result.Weight:F0} г\n";
+
+                    if (result.Protein.HasValue || result.Fat.HasValue || result.Carbs.HasValue)
+                    {
+                        message += $"\n📊 БЖВ:\n";
+                        message += $"  • Білки: {result.Protein:F1} г\n";
+                        message += $"  • Жири: {result.Fat:F1} г\n";
+                        message += $"  • Вуглеводи: {result.Carbs:F1} г\n";
+                    }
+
+                    if (result.Confidence.HasValue)
+                    {
+                        string confidenceEmoji = result.Confidence.Value >= 0.8 ? "🎯" :
+                                                result.Confidence.Value >= 0.6 ? "⚠️" : "❓";
+                        message += $"\n{confidenceEmoji} Впевненість AI: {result.Confidence:P0}";
+                    }
+
+                    message += "\n\n💡 Перевірте дані та збережіть запис.";
+
+                    await DisplayAlert("🤖 AI Розпізнавання", message, "Добре");
+
                     System.Diagnostics.Debug.WriteLine($"✅ Розпізнано: {result.DishName}, {result.Calories} ккал");
                 }
+
                 else
                 {
                     // ПОМИЛКА або не розпізнано
@@ -556,13 +566,12 @@ public partial class AddEntryPage : ContentPage
                     "• Якість фото",
                     "OK");
 
-                System.Diagnostics.Debug.WriteLine($"❌ Exception в аналізі: {ex}");
+                System.Diagnostics.Debug.WriteLine($" - Exception в аналізі: {ex}");
             }
         }
         catch(Exception ex) {
-            await DisplayAlert("❌ Помилка",
-                $"Непередбачена помилка: {ex.Message}", "OK");
-            System.Diagnostics.Debug.WriteLine($"❌ Outer exception: {ex}");
+            await DisplayAlert("❌ Помилка", $"Непередбачена помилка: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($" - Exception: {ex}");
         }
     }
 
@@ -589,12 +598,12 @@ public partial class AddEntryPage : ContentPage
                 await sourceStream.CopyToAsync(fileStream);
             }
 
-            System.Diagnostics.Debug.WriteLine($"✅ Фото збережено: {filePath}");
+            System.Diagnostics.Debug.WriteLine($"Фото збережено: {filePath}");
             return filePath;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ Помилка збереження: {ex}");
+            System.Diagnostics.Debug.WriteLine($"Помилка збереження: {ex}");
             return null;
         }
     }

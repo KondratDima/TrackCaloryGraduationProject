@@ -3,12 +3,27 @@ using TrackCalory.Models;
 
 namespace TrackCalory.Services
 {
+    /// <summary>
+    /// DatabaseService — Сервіс прямої роботи з SQLite базою даних
+    /// 
+    /// Це найнижчий рівень доступу до даних. DatabaseService безпосередньо взаємодіє з БД,
+    /// а CalorieDataService використовує DatabaseService для отримання/збереження даних
+    /// та організує їх в ObservableCollection для UI.
+    /// 
+    /// ВІДПОВІДАЛЬНІСТЬ DatabaseService:
+    /// - Управління підключенням до БД
+    /// - операції з записами (Create, Read, Update, Delete)
+    /// - Статистика та аналітика
+    /// - Управління профілем користувача
+    /// - Автоматичне створення таблиць
+    /// 
+    /// </summary>
     public class DatabaseService
     {
         private SQLiteAsyncConnection _database;
         private readonly string _dbPath;
 
-        public DatabaseService(string dbPath)
+        public DatabaseService(string dbPath) // Автоматичне отримання шляху до БД при завантаженні сервісу (логіка шляху у App.xaml.cs)
         {
             _dbPath = dbPath;
         }
@@ -23,16 +38,14 @@ namespace TrackCalory.Services
 
             // Створюємо таблицю CalorieEntries автоматично
             await _database.CreateTableAsync<CalorieEntry>();
-
             await _database.CreateTableAsync<UserProfile>();
-
-            //await SeedDataIfEmptyAsync();
-
         }
 
         // ========== ОСНОВНІ ОПЕРАЦІЇ З БАЗОЮ ==========
 
-        // Отримати всі записи (сортування: новіші спочатку)
+        /// <summary>
+        /// Отримати всі записи (сортування: новіші спочатку)
+        /// </summary>
         public async Task<List<CalorieEntry>> GetEntriesAsync()
         {
             await InitAsync();
@@ -41,7 +54,9 @@ namespace TrackCalory.Services
                                  .ToListAsync();
         }
 
-        // Зберегти запис ( додати новий або оновити існуючий)
+        /// <summary>
+        /// Зберегти запис ( додати новий або оновити існуючий)
+        /// </summary>
         public async Task<int> SaveEntryAsync(CalorieEntry entry)
         {
             await InitAsync();
@@ -60,12 +75,15 @@ namespace TrackCalory.Services
             }
         }
 
-        // Видалити запис
+        /// <summary>
+        /// Видалити запис
+        /// </summary>
         public async Task<int> DeleteEntryAsync(CalorieEntry entry)
         {
             await InitAsync();
             return await _database.DeleteAsync(entry);
         }
+
 
         // ========== СТАТИСТИКА ТА АНАЛІТИКА ==========
 
@@ -96,27 +114,17 @@ namespace TrackCalory.Services
                                  .ToListAsync();
         }
 
-        // Статистика за тиждень
-        public async Task<Dictionary<DateTime, double>> GetWeeklyStatisticsAsync()
-        {
-            await InitAsync();
-            var weekAgo = DateTime.Today.AddDays(-7);
 
-            var entries = await _database.Table<CalorieEntry>()
-                                        .Where(x => x.Date >= weekAgo)
-                                        .ToListAsync();
-
-            return entries.GroupBy(x => x.Date.Date)
-                         .ToDictionary(g => g.Key, g => g.Sum(x => x.Calories));
-        }
         // ========== МЕТОДИ ДЛЯ РОБОТИ З ПРОФІЛЕМ КОРИСТУВАЧА ==========
 
+        // Отримати профіль користувача
         public async Task<UserProfile> GetUserProfileAsync()
         {
             await InitAsync();
             return await _database.Table<UserProfile>().FirstOrDefaultAsync();
         }
 
+        // Зберегти профіль користувача
         public async Task<int> SaveUserProfileAsync(UserProfile profile)
         {
             await InitAsync();
@@ -136,27 +144,12 @@ namespace TrackCalory.Services
             }
         }
 
+        // Перевірити, чи існує профіль користувача
         public async Task<bool> HasUserProfileAsync()
         {
             await InitAsync();
             var count = await _database.Table<UserProfile>().CountAsync();
             return count > 0;
         }
-
-        // ========== ДОПОМІЖНІ МЕТОДИ ==========
-
-        public async Task<int> GetTotalEntriesCountAsync()
-        {
-            await InitAsync();
-            return await _database.Table<CalorieEntry>().CountAsync();
-        }
-
-        // Очистити всі дані (для тестування)
-        public async Task ClearAllDataAsync()
-        {
-            await InitAsync();
-            await _database.DeleteAllAsync<CalorieEntry>();
-        }
-
     }
 }

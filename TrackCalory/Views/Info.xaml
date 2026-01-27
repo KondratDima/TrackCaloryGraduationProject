@@ -3,48 +3,83 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TrackCalory.Views.Info"
              Title="Info">
-    <VerticalStackLayout Padding="15">
-        <HorizontalStackLayout HorizontalOptions="Center" >
+    <Grid Padding="15" RowDefinitions="Auto, *">
+
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="Center" VerticalOptions="Start">
             <Label 
             Text="Вас вітає"
             VerticalOptions="Center" 
             HorizontalOptions="End"
-            Padding="15"/>
+            Padding="10"/>
             <Label 
-                Text="Track Calory"
-                VerticalOptions="Center" 
-                TextColor="#5fd37c"
-                FontAttributes="Bold"
-                Padding="0"/>
+            Text="Track Calory"
+            VerticalOptions="Center" 
+            TextColor="#5fd37c"
+            FontAttributes="Bold"/>
+            
         </HorizontalStackLayout>
-        <VerticalStackLayout VerticalOptions="EndAndExpand">
-        <Frame BackgroundColor="#f7d9e0"
-       CornerRadius="10" Padding="15"  >
-                <VerticalStackLayout Padding="5" >
-                <Label Text="Розробник :Кондрат Дмиро Олексійович"
-            FontSize="14"
-            TextColor="Black"/>
-            </VerticalStackLayout>
-        </Frame>
-        <Frame BackgroundColor="#f7d9e0"
-                CornerRadius="10" Padding="15" Margin="0,5,0,0">
-            <VerticalStackLayout Padding="5">
-                <Label Text="Учень 11-В класу ліцею інформаційних технологій "
-                     FontSize="14"
-                     TextColor="Black"/>
-                    <Label Text="email: axaxoma4@gmailc.com"
-                         FontSize="14"
-                         TextColor="Black"/>
-                </VerticalStackLayout>
-        </Frame>
-        <Label Text="Дніпро"
-            FontSize="14"
-            TextColor="Black"
-               HorizontalOptions="CenterAndExpand"/>
-        <Label Text="2025"
-            FontSize="14"
-            TextColor="Black"
-            HorizontalOptions="CenterAndExpand"/>
+        <VerticalStackLayout Grid.Row="1" Spacing="5">
+            <Label 
+                Text="Це мобільний додаток для контролю харчування, який використовує Google Gemini Vision AI для автоматичного розпізнавання страв на фотографіях та визначення їх калорійності. Додаток скорочує час на підрахунок калорій з 10 хвилин до 10 секунд на один прийом їжі."
+                VerticalOptions="Center" 
+                TextColor="Black"
+                FontAttributes="Bold"/>
+
+            <Label 
+                Text="Функція 《Розпізнати калорії з AI》 не гарантує ідеальне розпізнавання і може помилятися"
+                VerticalOptions="Center" 
+                Margin="0,15,0,0"
+                TextColor="#694f55"
+                FontAttributes="Bold"
+                FontSize="16"/>
+
+            <HorizontalStackLayout Padding="15">
+                <Label Text=" Github :" FontSize="14"></Label>
+                <Label Text="https://github.com/KondratDima/TrackCaloryGraduationProject"
+                       TextColor="#e1607e"
+                       TextDecorations="Underline"
+                       HorizontalOptions="Center"
+                       FontSize="12">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLinkClicked" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+            
         </VerticalStackLayout>
-    </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" VerticalOptions="End" Spacing="5">
+
+            <Frame BackgroundColor="#f7d9e0" CornerRadius="10" Padding="15">
+                <VerticalStackLayout Padding="2">
+                    <Label Text="Розробник: Кондрат Дмитро Олексійович"
+                       FontSize="14"
+                       TextColor="Black"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame BackgroundColor="#f7d9e0" CornerRadius="10" Padding="15">
+                <VerticalStackLayout Padding="0">
+                    <Label Text="Учень 11-В класу ліцею інформаційних технологій"
+                       FontSize="11"
+                       TextColor="Black"/>
+                    <Label Text="email: axaxoma4@gmail.com"
+                       FontSize="11"
+                       TextColor="Black"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="Дніпро"
+               FontSize="14"
+               TextColor="Black"
+               HorizontalOptions="Center"/>
+
+            <Label Text="2025"
+               FontSize="14"
+               TextColor="Black"
+               HorizontalOptions="Center"/>
+
+        </VerticalStackLayout>
+
+    </Grid>
 </ContentPage>

@@ -6,6 +6,9 @@ using TrackCalory.Services;
 
 namespace TrackCalory.ViewModels
 {
+    /// <summary>
+    /// ViewModel для детального перегляду запису про калорії та його видалення
+    /// </summary>
     public class EntryDetailViewModel : INotifyPropertyChanged
     {
         private readonly CalorieEntry _entry;
@@ -22,11 +25,12 @@ namespace TrackCalory.ViewModels
 
             DeleteEntryCommand = new Command(async () => await DeleteEntry());
         }
-
         public CalorieEntry Entry => _entry;
-
         public ICommand DeleteEntryCommand { get; }
 
+        /// <summary>
+        /// Видалити запис
+        /// </summary>
         private async Task DeleteEntry()
         {
             try
@@ -70,8 +74,10 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
+        // Допоміжний метод оновлення данних (загальний)
+        // механізм для повідомлення UI про зміни даних у ViewModel.
+        public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

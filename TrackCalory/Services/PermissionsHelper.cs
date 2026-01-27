@@ -21,7 +21,7 @@ namespace TrackCalory.Services
 
                 if (status == PermissionStatus.Granted)
                 {
-                    System.Diagnostics.Debug.WriteLine("✅ Дозвіл на камеру вже наданий");
+                    System.Diagnostics.Debug.WriteLine("Дозвіл на камеру вже наданий");
                     return true;
                 }
 
@@ -65,12 +65,12 @@ namespace TrackCalory.Services
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"⚠️ Дозвіл на камеру: {status}");
+                System.Diagnostics.Debug.WriteLine($"⚠Дозвіл на камеру: {status}");
                 return false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка перевірки дозволу камери: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка перевірки дозволу камери: {ex.Message}");
                 return false;
             }
         }
@@ -86,7 +86,7 @@ namespace TrackCalory.Services
 
                 if (status == PermissionStatus.Granted)
                 {
-                    System.Diagnostics.Debug.WriteLine("✅ Дозвіл на фото вже наданий");
+                    System.Diagnostics.Debug.WriteLine("Дозвіл на фото вже наданий");
                     return true;
                 }
 
@@ -110,7 +110,7 @@ namespace TrackCalory.Services
 
                 if (status == PermissionStatus.Granted)
                 {
-                    System.Diagnostics.Debug.WriteLine("✅ Користувач надав доступ до фото");
+                    System.Diagnostics.Debug.WriteLine("Користувач надав доступ до фото");
                     return true;
                 }
 
@@ -129,12 +129,12 @@ namespace TrackCalory.Services
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"⚠️ Дозвіл на фото: {status}");
+                System.Diagnostics.Debug.WriteLine($"Дозвіл на фото: {status}");
                 return false;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка перевірки дозволу фото: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка перевірки дозволу фото: {ex.Message}");
                 return false;
             }
         }

@@ -23,7 +23,7 @@
             <Frame BackgroundColor="White" HasShadow="True" CornerRadius="10" Padding="15">
                 <StackLayout>
                     <Label Text="Стать" FontAttributes="Bold"/>
-                    <Frame BackgroundColor="Violet" HasShadow="True">
+                    <Frame BackgroundColor="White" HasShadow="True">
                         <Picker x:Name="GenderPicker" Title="Оберіть стать" SelectedItem="0"  >
                         <Picker.ItemsSource>
                             <x:Array Type="{x:Type x:String}">

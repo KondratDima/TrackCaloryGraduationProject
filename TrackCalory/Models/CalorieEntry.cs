@@ -43,7 +43,7 @@ namespace TrackCalory.Models
             }
         }
 
-        // Опис страви (наприклад: "Омлет з овочами")
+        // Опис страви 
         [MaxLength(500)]
         public string Description
         {
@@ -56,7 +56,7 @@ namespace TrackCalory.Models
         }
 
         [MaxLength(100)] // катигорія та БЖУ
-        public string Category { get; set; } = "Основна страва";
+        public string Category { get; set; } = "Сніданок";
         public double? Protein { get; set; }
         public double? Fat { get; set; }
         public double? Carbs { get; set; }
@@ -83,10 +83,10 @@ namespace TrackCalory.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
 
+
         // Це потрібно для того, щоб інтерфейс автоматично оновлювався
         // коли змінюються дані
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

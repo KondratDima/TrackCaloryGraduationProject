@@ -9,13 +9,10 @@ namespace TrackCalory.Services
     /// Сервіс для читання налаштувань з appsettings.json
     /// 
     /// ЛОГІКА:
-    /// 1. Читає вбудований appsettings.json (EmbeddedResource)
+    /// 1. Читає вбудований appsettings.json (тобто відкриває потік StreamReader)
     /// 2. Парсить JSON та витягує налаштування
     /// 3. Надає доступ до API ключа та інших параметрів
     /// 
-    /// ЧОМУ ТАК:
-    /// - Файл вбудовується в додаток при компіляції
-    /// - Не потрібен доступ до файлової системи
     /// </summary>
     public class ConfigurationService
     {
@@ -28,7 +25,7 @@ namespace TrackCalory.Services
         }
 
         /// <summary>
-        /// Читає appsettings.json з EmbeddedResource
+        /// Читає appsettings.json з допомогою StreamReader та повертає як JObject
         /// </summary>
         private JObject LoadConfiguration()
         {
@@ -56,7 +53,6 @@ namespace TrackCalory.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Помилка завантаження конфігурації: {ex.Message}");
                 throw new Exception("Не вдалося завантажити appsettings.json.");
             }
         }
@@ -66,31 +62,22 @@ namespace TrackCalory.Services
         /// </summary>
         public string GetGeminiApiKey()
         {
-            try
-            {
-                string apiKey = _configuration["GeminiApiSettings"]?["ApiKey"]?.ToString();
+            string apiKey = _configuration["GeminiApiSettings"]?["ApiKey"]?.ToString();
 
-                if (string.IsNullOrWhiteSpace(apiKey) )
-                {
-                    throw new InvalidOperationException(
-                        "API ключ не налаштований в appsettings.json. " );
-                }
-
-                return apiKey;
-            }
-            catch (Exception ex)
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка отримання API ключа: {ex.Message}");
-                throw;
+                throw new InvalidOperationException("API ключ не налаштований в appsettings.json. ");
             }
+
+            return apiKey;
         }
 
         /// <summary>
-        /// Отримує назву моделі (gemini-1.5-flash)
+        /// Отримує назву моделі (gemini-2.5-flash)
         /// </summary>
         public string GetModelName()
         {
-            return _configuration["GeminiApiSettings"]?["ModelName"]?.ToString() ?? "gemini-1.5-flash";
+            return _configuration["GeminiApiSettings"]?["ModelName"]?.ToString() ?? "gemini-2.5-flash";
         }
 
         /// <summary>

@@ -6,4 +6,8 @@ public partial class Info : ContentPage
 	{
 		InitializeComponent();
 	}
+    private async void OnLinkClicked(object sender, EventArgs e)
+    {
+        await Launcher.Default.OpenAsync("https://github.com/KondratDima/TrackCaloryGraduationProject");
+    }
 }

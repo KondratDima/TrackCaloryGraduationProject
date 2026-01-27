@@ -2,6 +2,9 @@ using TrackCalory.Models;
 
 namespace TrackCalory.Services
 {
+    /// <summary>
+    /// Розраховує денну норму калорій на основі профілю користувача
+    /// </summary>
     public class CalorieCalculationService
     {
         // Розрахунок BMR за формулою Міффліна-Сен Жеора

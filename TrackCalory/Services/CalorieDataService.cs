@@ -4,6 +4,17 @@ using System.Collections.ObjectModel;
 
 namespace TrackCalory.Services
 {
+    /// <summary>
+    /// Проміжний шар між UI (Views/ViewModels) та базою даних. 
+    /// 
+    /// Працює разом з DatabaseService підгружаючи данні в ObservableCollection
+    /// 
+    /// Забезпечує роботу з записами про їжу, включаючи :
+    /// - Додавання записів
+    /// - видалення записів
+    /// - отримання статистики
+    /// - пошук записів за датою
+    /// </summary>
     public class CalorieDataService
     {
         private readonly DatabaseService _databaseService;
@@ -20,7 +31,9 @@ namespace TrackCalory.Services
 
         public ObservableCollection<CalorieEntry> GetEntries() => _entries;
 
-        // Завантажити записи з БД в ObservableCollection
+        /// <summary>
+        /// Завантажити записи з БД в ObservableCollection
+        /// </summary>
         public async Task LoadEntriesFromDatabaseAsync()
         {
             try
@@ -39,6 +52,9 @@ namespace TrackCalory.Services
             }
         }
 
+        /// <summary>
+        /// Метод для отримання записів за певну дату
+        /// </summary>
         public async Task<List<CalorieEntry>> GetEntriesByDateAsync(DateTime date)
         {
             try
@@ -52,6 +68,9 @@ namespace TrackCalory.Services
             }
         }
 
+        /// <summary>
+        /// Додати новий запис
+        /// </summary>
         public async Task AddEntryAsync(CalorieEntry entry)
         {
             try
@@ -71,7 +90,9 @@ namespace TrackCalory.Services
             }
         }
 
-        // Видалити запис
+        /// <summary>
+        /// Видалити запис
+        /// </summary>
         public async Task RemoveEntryAsync(CalorieEntry entry)
         {
             try
@@ -88,7 +109,9 @@ namespace TrackCalory.Services
             }
         }
 
-        // Калорії за сьогодні (через БД)
+        /// <summary>
+        /// Калорії за сьогодні (через БД)
+        /// </summary>
         public async Task<double> GetTotalCaloriesForDateAsync(DateTime date)
         {
             try
@@ -102,20 +125,5 @@ namespace TrackCalory.Services
             }
         }
 
-        // Статистика за тиждень
-        public async Task<Dictionary<DateTime, double>> GetWeeklyStatisticsAsync()
-        {
-            try
-            {
-                return await _databaseService.GetWeeklyStatisticsAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($" Помилка отримання статистики: {ex.Message}");
-                return new Dictionary<DateTime, double>();
-            }
-        }
-
-        
     }
 }

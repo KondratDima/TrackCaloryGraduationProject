@@ -17,11 +17,8 @@ namespace TrackCalory.Services
     /// 4. Відправляє до Gemini API з промптом
     /// 5. Парсить JSON відповідь з калоріями та БЖУ
     /// 
-    /// ВЗАЄМОДІЯ З PhotoService:
-    /// - PhotoService зберігає фото → повертає шлях
-    /// - GeminiVisionService читає фото за шляхом → аналізує
     /// 
-    /// МОДЕЛЬ: gemini-2.0-flash 
+    /// МОДЕЛЬ: gemini-2.5-flash 
     /// </summary>
     public class GeminiVisionService
     {
@@ -36,13 +33,12 @@ namespace TrackCalory.Services
         {
             _configService = configService;
             _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(30); // Таймаут 30 сек
+            _httpClient.Timeout = TimeSpan.FromSeconds(30); // максимальний час очікування відповіді від сервера 30 сек
 
             // Завантажуємо налаштування з appsettings.json
             _apiKey = _configService.GetGeminiApiKey();
             _temperature = _configService.GetTemperature();
 
-            System.Diagnostics.Debug.WriteLine($"✅ GeminiVisionService ініціалізовано (temp={_temperature})");
         }
 
         /// <summary>
@@ -63,14 +59,14 @@ namespace TrackCalory.Services
                 // КРОК 2: Читаємо фото як масив байтів
                 byte[] imageBytes = await File.ReadAllBytesAsync(photoPath);
 
-                System.Diagnostics.Debug.WriteLine($"📸 Розмір фото: {imageBytes.Length / 1024} KB");
+                System.Diagnostics.Debug.WriteLine($"Розмір фото: {imageBytes.Length / 1024} KB");
 
-                // КРОК 3: Відправляємо на аналіз
+                // КРОК 3: Відправляємо на аналіз у основний метод
                 return await AnalyzeFoodImageAsync(imageBytes);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка читання фото: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка читання фото: {ex.Message}");
                 return new FoodAnalysisResult { Error = $"Помилка читання файлу: {ex.Message}" };
             }
         }
@@ -119,14 +115,14 @@ namespace TrackCalory.Services
                     // Налаштування генерації
                     generationConfig = new
                     {
-                        temperature = _temperature,  // 0.1 - точні відповіді
+                        temperature = _temperature, 
                         topK = 32,
                         topP = 1,
                         maxOutputTokens = _configService.GetMaxTokens()
                     }
                 };
 
-                // КРОК 3: Серіалізуємо в JSON
+                // КРОК 3: Серіалізуємо в JSON , тобто перетворюємо об'єкт с# в JSON рядок
                 string jsonRequest = JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
@@ -141,21 +137,22 @@ namespace TrackCalory.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     string errorContent = await response.Content.ReadAsStringAsync();
-                    System.Diagnostics.Debug.WriteLine($"❌ API Error {response.StatusCode}: {errorContent}");
+                    System.Diagnostics.Debug.WriteLine($"API Error {response.StatusCode}: {errorContent}");
 
                     if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                     {
-                        return new FoodAnalysisResult { Error = "⏳ Перевищено ліміт запитів. Спробуйте за хвилину." };
+                        return new FoodAnalysisResult { Error = "Перевищено ліміт запитів. Спробуйте за хвилину." };
                     }
 
                     return new FoodAnalysisResult { Error = $"Помилка API: {response.StatusCode}" };
                 }
 
-                // КРОК 7: Парсимо відповідь
+                // КРОК 7: Парсимо відповідь - спочатку отримуємо як текст string 
                 string responseJson = await response.Content.ReadAsStringAsync();
-                System.Diagnostics.Debug.WriteLine($"📥 Отримано відповідь від Gemini");
+                System.Diagnostics.Debug.WriteLine($"Отримано відповідь від Gemini");
 
                 // Структура відповіді: candidates[0].content.parts[0].text
+                // - текстова відповідь тобто з всієї структури JSON отримуємо тільки текстову частину
                 var geminiResponse = JObject.Parse(responseJson);
                 string textResponse = geminiResponse["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString();
 
@@ -170,6 +167,8 @@ namespace TrackCalory.Services
                 System.Diagnostics.Debug.WriteLine($"AI відповідь: {textResponse.Substring(0, Math.Min(150, textResponse.Length))}...");
 
                 // КРОК 9: Парсимо JSON результат
+                // JsonConvert.DeserializeObject — метод, який перетворює JSON рядок у C# об'єкт
+                // <FoodAnalysisResult> — тип, в який ми хочемо перетворити JSON (тобто це шаблон)
                 var result = JsonConvert.DeserializeObject<FoodAnalysisResult>(textResponse);
 
                 if (result == null)
@@ -177,22 +176,24 @@ namespace TrackCalory.Services
                     return new FoodAnalysisResult { Error = "Не вдалося розпарсити відповідь" };
                 }
 
-                System.Diagnostics.Debug.WriteLine($"✅ Розпізнано: {result.DishName}, {result.Calories} ккал");
+                System.Diagnostics.Debug.WriteLine($"Розпізнано: {result.DishName}, {result.Calories} ккал");
+
                 return result;
+
             }
             catch (HttpRequestException ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка мережі: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка мережі: {ex.Message}");
                 return new FoodAnalysisResult { Error = "Помилка підключення до інтернету" };
             }
             catch (JsonException ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка JSON: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка JSON: {ex.Message}");
                 return new FoodAnalysisResult { Error = "AI повернув некоректний формат даних" };
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Загальна помилка: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Загальна помилка: {ex.Message}");
                 return new FoodAnalysisResult { Error = $"Помилка: {ex.Message}" };
             }
         }
@@ -227,7 +228,7 @@ namespace TrackCalory.Services
 1. Калорії вказуй для ВСІЄЇ порції на фото
 2. Назву пиши українською мовою
 3. Будь максимально точним у розрахунках
-4. Враховуй український контекст страв (борщ, вареники, сало тощо)
+4. Враховуй український контекст страв (борщ, вареники тощо)
 5. Якщо сумніваєшся - вказуй confidence < 0.7";
         }
 

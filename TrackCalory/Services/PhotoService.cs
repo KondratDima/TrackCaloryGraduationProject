@@ -61,7 +61,7 @@ namespace TrackCalory.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка вибору фото: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка вибору фото: {ex.Message}");
                 throw;
             }
         }
@@ -87,12 +87,12 @@ namespace TrackCalory.Services
                     await sourceStream.CopyToAsync(fileStream);
                 }
 
-                System.Diagnostics.Debug.WriteLine($"✅ Фото збережено: {filePath}");
+                System.Diagnostics.Debug.WriteLine($"Фото збережено: {filePath}");
                 return filePath;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка збереження фото: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка збереження фото: {ex.Message}");
                 throw;
             }
         }
@@ -107,39 +107,14 @@ namespace TrackCalory.Services
                 if (!string.IsNullOrEmpty(photoPath) && File.Exists(photoPath))
                 {
                     File.Delete(photoPath);
-                    System.Diagnostics.Debug.WriteLine($"🗑️ Фото видалено: {photoPath}");
+                    System.Diagnostics.Debug.WriteLine($"Фото видалено: {photoPath}");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка видалення фото: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Помилка видалення фото: {ex.Message}");
             }
         }
 
-        /// <summary>
-        /// Очистити всі старі фото (наприклад, старіші за 30 днів)
-        /// </summary>
-        public void CleanupOldPhotos(int daysToKeep = 30)
-        {
-            try
-            {
-                var files = Directory.GetFiles(_photosDirectory, "*.jpg");
-                var cutoffDate = DateTime.Now.AddDays(-daysToKeep);
-
-                foreach (var file in files)
-                {
-                    var fileInfo = new FileInfo(file);
-                    if (fileInfo.CreationTime < cutoffDate)
-                    {
-                        File.Delete(file);
-                        System.Diagnostics.Debug.WriteLine($"🗑️ Видалено старе фото: {file}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"❌ Помилка очищення старих фото: {ex.Message}");
-            }
-        }
     }
 }
