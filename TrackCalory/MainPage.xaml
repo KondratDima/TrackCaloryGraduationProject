@@ -6,8 +6,9 @@
              x:Class="TrackCalory.MainPage"
              Title="Трекер калорій"
              BackgroundColor="#d6d1d3"
-              Shell.BackgroundColor="#f4becb"
-             Shell.ForegroundColor="#f4becb">
+             Shell.BackgroundColor="#f4becb"
+             Shell.ForegroundColor="White"
+             >
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel x:Name="ViewModel"/>
@@ -33,7 +34,7 @@
                HasShadow="False"
                Padding="12"
                >
-            <StackLayout Spacing="8">
+            <StackLayout Margin="0,-12,0,0">
 
                 <!-- Вибрана дата (клікабельна) -->
                 <Button Text="{Binding SelectedDateFormatted}"
@@ -42,11 +43,12 @@
                     ContentLayout="Left, 10"
                     BackgroundColor="#aff3c0"
                     TextColor="#694f55"
-                    FontSize="15"
+                    FontSize="14"
                     HorizontalOptions="Center"
                     BorderWidth="0"
                     BorderColor="#dad7d8"
                     CornerRadius="25"
+                    Margin="0,2,0,0"
                     Command="{Binding ShowDatePickerCommand}">
                 </Button>
 
@@ -72,7 +74,7 @@
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
-                            Padding="0,0,5,-5"
+                            Padding="0,0,15,5"
                             Command="{Binding PreviousDayCommand}"/>
 
                     <!-- Центральна частина: дата та калорії -->
@@ -81,39 +83,37 @@
                                 VerticalOptions="Center">
 
                         <!-- Калорії за вибрану дату -->
-                        <Frame CornerRadius="18" 
+                        <Frame CornerRadius="20" 
                                HorizontalOptions="CenterAndExpand"
-                               Padding="15" 
-                               Margin="0,0,5,2"
-                               BorderColor="#f4becb"
-                               BackgroundColor="#fff5f7">
-                            <Label Text="{Binding SelectedDateCalories, StringFormat='Всього: {0:F0} kkal'}"
-                               FontSize="21"
-                               FontAttributes="Bold" 
-                               HorizontalOptions="Center"
-                               TextColor="#e1607e"
-                               Margin="0,5,0,0"/>
-                        </Frame>
-                        <!-- Денна норма та прогрес -->
-                        <Label Text="{Binding DailyGoal, StringFormat='🎯 Денна норма: {0:F0} ккал'}"
-                              FontSize="12"
-                               FontAttributes="Bold"
-                              HorizontalOptions="Center"
-                              TextColor="#7F8C8D"/>
+                               Padding="12" 
+                               WidthRequest="260"
+                               Margin="0,7,0,0"
+                               BorderColor="Transparent"
+                               BackgroundColor="#fff0f3">
+                            <VerticalStackLayout>
+                                <Label Text="kkal"
+                                        FontSize="14"
+                                        FontAttributes="None" 
+                                        HorizontalOptions="Center"
+                                        TextColor="#f4becb"
+                                        Margin="0,-5,0,0"/>
+                                <Label Text="{Binding RemainingCaloriesFormatted}"
+                                        FontSize="21"
+                                        FontAttributes="Bold" 
+                                        HorizontalOptions="Center"
+                                        TextColor="#678c63"
+                                        Margin="0,0,0,0"/>
 
-                        <Label Text="{Binding RemainingCaloriesFormatted}"
-                              FontSize="12"
-                              HorizontalOptions="Center"
-                              TextColor="#dad7d8"
-                              Margin="0,15,0,-5"/>
-                        
-                        <!-- Прогрес бар -->
-                        <ProgressBar Progress="{Binding ProgressPercentage}"
-                              ProgressColor="#27AE60"
-                              HeightRequest="10"
-                              Margin="20,5,20,0"
-                                     />
-                        
+                                <!-- Прогрес бар -->
+                                <ProgressBar Progress="{Binding ProgressPercentage}"
+                                        ProgressColor="#5fd37c"
+                                        BackgroundColor="#f4becb"
+                                        HeightRequest="0"
+                                        Margin="8,8,0,8"
+                                        ScaleY="2.0"
+                                />
+                            </VerticalStackLayout>
+                        </Frame>
                     </StackLayout>
                     
                     <!-- Права стрілка (наступний день) -->
@@ -127,8 +127,121 @@
                             TextColor="#5fd37c"
                             WidthRequest="50"
                             HeightRequest="50"
-                            Padding="0,0,0,0"
+                            Padding="15,0,0,5"
                             Command="{Binding NextDayCommand}"/>
+                </Grid>
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Frame Grid.Column="0"
+                           BackgroundColor="#fff5f7"
+                           BorderColor="Transparent"
+                           Padding="0"
+                           Margin="0,0,0,0">
+                        <VerticalStackLayout>
+                            <Grid>
+                            <Label Text="Білки" 
+                                   Margin="8,0,0,0"
+                                   FontSize="8"
+                                   VerticalOptions="Center"/>
+
+                                <Label FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="#E74C3C"
+                                       HorizontalOptions="End"
+                                       Margin="0,0,6,0">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding TodayProtein, StringFormat='{0:F0}'}"/>
+                                            <Span Text=" / "/>
+                                            <Span Text="{Binding DailyProteinGoal, StringFormat='{0:F0} г'}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
+                            <ProgressBar Progress="{Binding ProteinProgressPercentage}"
+                                         ProgressColor="#E74C3C"
+                                         BackgroundColor="#f4becb"
+                                         HeightRequest="3"
+                                         Margin="8,2,8,4"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                    
+                    <Frame Grid.Column="1"
+                           BackgroundColor="#fff5f7"
+                           BorderColor="Transparent"
+                           Padding="0"
+                           Margin="0,0,0,0">
+                        <VerticalStackLayout>
+                            <Grid >
+                                <Label Text="Жири" 
+                                        FontSize="8"
+                                       Margin="8,0,0,0"
+                                        VerticalOptions="Center"/>
+
+                                <Label FontSize="12"
+                                            FontAttributes="Bold"
+                                            TextColor="#F39C12"
+                                       Margin="0,0,6,0"
+                                       VerticalOptions="Center"
+                                           HorizontalOptions="End">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding TodayFat, StringFormat='{0:F0}'}"/>
+                                            <Span Text=" / "/>
+                                            <Span Text="{Binding DailyFatGoal, StringFormat='{0:F0} г'}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
+                            <ProgressBar Progress="{Binding FatProgressPercentage}"
+                                         ProgressColor="#F39C12"
+                                         BackgroundColor="#f4becb"
+                                         HeightRequest="3"
+                                         Margin="8,2,8,4"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Column="2"
+                           BackgroundColor="#fff5f7"
+                           BorderColor="Transparent"
+                           Padding="0"
+                           Margin="0,0,0,0">
+                        <VerticalStackLayout>
+                            <Grid>
+                                <Label Text="Вуглеводи" 
+                                   FontSize="8"
+                                       Margin="8,0,0,0"
+                                   VerticalOptions="Center"/>
+
+                                <Label FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#3498DB"
+                                       Margin="0,0,6,0"
+                                           VerticalOptions="Center"
+                                       HorizontalOptions="End">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding TodayCarbs, StringFormat='{0:F0}'}"/>
+                                            <Span Text=" / "/>
+                                            <Span Text="{Binding DailyCarbsGoal, StringFormat='{0:F0} г'}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
+                            <ProgressBar Progress="{Binding CarbsProgressPercentage}"
+                                         ProgressColor="#3498DB"
+                                         BackgroundColor="#f4becb"
+                                         HeightRequest="3"
+                                         Margin="8,2,8,4"
+                                         />
+                        </VerticalStackLayout>
+                    </Frame>
+
                 </Grid>
 
                 <!-- Індикатор: сьогодні/інша дата -->
@@ -137,7 +250,7 @@
                        FontAttributes="Italic"
                        HorizontalOptions="Center"
                        TextColor="#27AE60"
-                       Margin="0,0,0,0"/>
+                       Margin="0,7,0,0"/>
             </StackLayout>
         </Frame>
 
@@ -155,7 +268,7 @@
                            Opacity="0.2"
                            HorizontalOptions="Center"
                         />
-                    <Label Text="Немає заисів за цю дату"
+                    <Label Text="Немає записів за цю дату"
                            Opacity="0.8"
                            FontSize="16"
                            FontAttributes="Italic"
@@ -231,8 +344,7 @@
                                        TextColor="#9fc1a8"/>
 
                                 <!-- БЖУ (якщо є) -->
-                                <Label IsVisible="{Binding Protein}"
-                                       FontSize="10"
+                                <Label FontSize="10"
                                        TextColor="#95A5A6">
                                     <Label.FormattedText>
                                         <FormattedString>

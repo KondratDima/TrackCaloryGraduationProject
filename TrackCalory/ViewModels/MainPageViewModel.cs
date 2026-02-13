@@ -72,6 +72,7 @@ namespace TrackCalory.ViewModels
 
         // ========== ВЛАСТИВОСТІ ==========
 
+        // ГОЛОВНА КОЛЕКЦІЯ записи усіх даних (бере данні з CalorieDataService)
         public ObservableCollection<CalorieEntry> Entries { get; private set; }
 
         // КОЛЕКЦІЯ записи тільки за вибрану дату
@@ -86,6 +87,7 @@ namespace TrackCalory.ViewModels
         }
 
         //ВЛАСТИВОСТІ для роботи з датами
+        
         public DateTime SelectedDate
         {
             get => _selectedDate;
@@ -280,6 +282,15 @@ namespace TrackCalory.ViewModels
                 // Отримуємо загальну кількість калорій за дату
                 SelectedDateCalories = await _dataService.GetTotalCaloriesForDateAsync(SelectedDate);
 
+                // Завантажуємо БЖВ за вибрану дату НАПРЯМУ з DatabaseService
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "TrackCalory.db3");
+                var databaseService = new DatabaseService(dbPath);
+                var macros = await databaseService.GetMacrosForDateAsync(SelectedDate);
+
+                TodayProtein = macros.protein;
+                TodayFat = macros.fat;
+                TodayCarbs = macros.carbs;
+
                 // Оновлюємо добову норму колорій
                 UpdateRemainingCalories();
 
@@ -292,10 +303,17 @@ namespace TrackCalory.ViewModels
             }
         }
 
-        // ========== ДОБОВА КОЛОРІЙНІСТЬ ==========
+        // ========== ДОБОВА КОЛОРІЙНІСТЬ ТА БЖВ ==========
         private double _dailyGoal;
         private double _remainingCalories;
+        private double _dailyProteinGoal;
+        private double _dailyFatGoal;
+        private double _dailyCarbsGoal;
+        private double _todayProtein;
+        private double _todayFat;
+        private double _todayCarbs;
 
+        // - КАЛОРІЇ ВЛАСТИВОСТІ 
         public double DailyGoal
         {
             get => _dailyGoal;
@@ -306,7 +324,6 @@ namespace TrackCalory.ViewModels
                 UpdateRemainingCalories();
             }
         }
-
         public double RemainingCalories
         {
             get => _remainingCalories;
@@ -319,20 +336,84 @@ namespace TrackCalory.ViewModels
             }
         }
 
+        // - БЖВ ВЛАСТИВОСТІ 
+        public double DailyProteinGoal
+        {
+            get => _dailyProteinGoal;
+            set
+            {
+                _dailyProteinGoal = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ProteinProgressPercentage));
+            }
+        }
+        public double DailyFatGoal
+        {
+            get => _dailyFatGoal;
+            set
+            {
+                _dailyFatGoal = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(FatProgressPercentage));
+            }
+        }
+        public double DailyCarbsGoal
+        {
+            get => _dailyCarbsGoal;
+            set
+            {
+                _dailyCarbsGoal = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CarbsProgressPercentage));
+            }
+        }
+
+        public double TodayProtein
+        {
+            get => _todayProtein;
+            set
+            {
+                _todayProtein = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ProteinProgressPercentage));
+            }
+        }
+        public double TodayFat
+        {
+            get => _todayFat;
+            set
+            {
+                _todayFat = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(FatProgressPercentage));
+            }
+        }
+        public double TodayCarbs
+        {
+            get => _todayCarbs;
+            set
+            {
+                _todayCarbs = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CarbsProgressPercentage));
+            }
+        }
+
         // Повертає str який пише скільки залишилося набрати колорій за день та чи перевищено
         public string RemainingCaloriesFormatted
         {
             get
             {
-                if (RemainingCalories > 0)
-                    return $"Залишилось: {RemainingCalories:F0} ккал";
-                else if (RemainingCalories == 0)
-                    return "Норма досягнута! 🎯";
+                if (RemainingCalories > 50)
+                    return $" {SelectedDateCalories:F0} / {DailyGoal:F0} ";
+                else if (RemainingCalories < 51 && RemainingCalories>-51)
+                    return $"{SelectedDateCalories:F0} / {DailyGoal:F0} ✅";
                 else
-                    return $"Перевищено на {Math.Abs(RemainingCalories):F0} ккал ⚠️";
+                    return $"{SelectedDateCalories:F0} / {DailyGoal:F0} ⚠️";
             }
         }
 
+        // Відсотки виконання 
         public double ProgressPercentage
         {
             get
@@ -341,12 +422,18 @@ namespace TrackCalory.ViewModels
                 return (SelectedDateCalories / DailyGoal);
             }
         }
+        public double ProteinProgressPercentage => DailyProteinGoal > 0 ? (TodayProtein / DailyProteinGoal) : 0;
+        public double FatProgressPercentage => DailyFatGoal > 0 ? (TodayFat / DailyFatGoal) : 0;
+        public double CarbsProgressPercentage => DailyCarbsGoal > 0 ? (TodayCarbs / DailyCarbsGoal) : 0;
 
         private void UpdateRemainingCalories()
         {
             RemainingCalories = DailyGoal - SelectedDateCalories;
         }
 
+        /// <summary>
+        /// Підванантажуємо профіль користувача для отримання добової норми калорій та бжв
+        /// </summary>
         private async Task LoadUserProfileAsync()
         {
             try
@@ -358,6 +445,10 @@ namespace TrackCalory.ViewModels
                 if (profile != null)
                 {
                     DailyGoal = profile.DailyCalorieGoal;
+                    // Завантажуємо норми БЖВ
+                    DailyProteinGoal = profile.DailyProteinGoal;
+                    DailyFatGoal = profile.DailyFatGoal;
+                    DailyCarbsGoal = profile.DailyCarbsGoal;
                 }
             }
             catch (Exception ex)
@@ -365,6 +456,9 @@ namespace TrackCalory.ViewModels
                 System.Diagnostics.Debug.WriteLine($"Помилка завантаження профілю: {ex.Message}");
             }
         }
+
+        
+
 
         // ========== ОСНОВНІ МЕТОДИ ==========
 

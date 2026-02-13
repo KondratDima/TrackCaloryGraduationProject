@@ -368,17 +368,17 @@ public partial class AddEntryPage : ContentPage
                 }
                 else
                 {
-                    // ❌ ПОМИЛКА або не розпізнано
+                    // ПОМИЛКА або не розпізнано
                     string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
 
                     await DisplayAlert(
-                        "⚠️ Не вдалося розпізнати",
+                        "Не вдалося розпізнати",
                         $"{errorMessage}\n\n" +
                         "Можливі причини:\n" +
                         "• На фото немає їжі\n" +
                         "• Фото нечітке або темне\n" +
                         "• Перевищено ліміт API (15 запитів/хв)\n\n" +
-                        "💡 Спробуйте зробити інше фото або введіть дані вручну.",
+                        "Спробуйте зробити інше фото або введіть дані вручну.",
                         "OK");
 
                     System.Diagnostics.Debug.WriteLine($"Не розпізнано: {errorMessage}");
@@ -390,7 +390,7 @@ public partial class AddEntryPage : ContentPage
                 await Navigation.PopModalAsync(false);
 
                 await DisplayAlert(
-                    "❌ Помилка",
+                    "Помилка",
                     $"Не вдалося проаналізувати фото:\n{ex.Message}\n\n" +
                     "Перевірте:\n" +
                     "• Інтернет-з'єднання\n" +
@@ -403,7 +403,7 @@ public partial class AddEntryPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("❌ Помилка",
+            await DisplayAlert("Помилка",
                 $"Непередбачена помилка: {ex.Message}", "OK");
             System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
         }
@@ -531,7 +531,7 @@ public partial class AddEntryPage : ContentPage
 
                     await DisplayAlert("🤖 AI Розпізнавання", message, "Добре");
 
-                    System.Diagnostics.Debug.WriteLine($"✅ Розпізнано: {result.DishName}, {result.Calories} ккал");
+                    System.Diagnostics.Debug.WriteLine($"Розпізнано: {result.DishName}, {result.Calories} ккал");
                 }
 
                 else
@@ -540,16 +540,16 @@ public partial class AddEntryPage : ContentPage
                     string errorMessage = result.Error ?? "Не вдалося розпізнати їжу на фото";
 
                     await DisplayAlert(
-                        "⚠️ Не вдалося розпізнати",
+                        "Не вдалося розпізнати",
                         $"{errorMessage}\n\n" +
                         "Можливі причини:\n" +
                         "• На фото немає їжі\n" +
                         "• Фото нечітке або темне\n" +
                         "• Перевищено ліміт API (15 запитів/хв)\n\n" +
-                        "💡 Спробуйте зробити інше фото або введіть дані вручну.",
+                        "Спробуйте зробити інше фото або введіть дані вручну.",
                         "OK");
 
-                    System.Diagnostics.Debug.WriteLine($"❌ Не розпізнано: {errorMessage}");
+                    System.Diagnostics.Debug.WriteLine($"Не розпізнано: {errorMessage}");
                 }
             }
             catch (Exception ex)
@@ -558,7 +558,7 @@ public partial class AddEntryPage : ContentPage
                 await Navigation.PopModalAsync(false);
 
                 await DisplayAlert(
-                    "❌ Помилка",
+                    "Помилка",
                     $"Не вдалося проаналізувати фото:\n{ex.Message}\n\n" +
                     "Перевірте:\n" +
                     "• Інтернет-з'єднання\n" +
@@ -570,7 +570,7 @@ public partial class AddEntryPage : ContentPage
             }
         }
         catch(Exception ex) {
-            await DisplayAlert("❌ Помилка", $"Непередбачена помилка: {ex.Message}", "OK");
+            await DisplayAlert("Помилка", $"Непередбачена помилка: {ex.Message}", "OK");
             System.Diagnostics.Debug.WriteLine($" - Exception: {ex}");
         }
     }

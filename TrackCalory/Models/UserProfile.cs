@@ -24,6 +24,11 @@ namespace TrackCalory.Models
         // ГОЛОВНЕ ПОЛЕ - розрахована добова норма калорій
         public double DailyCalorieGoal { get; set; }
 
+        // Денні норми БЖВ
+        public double DailyProteinGoal { get; set; }
+        public double DailyFatGoal { get; set; }
+        public double DailyCarbsGoal { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime UpdatedAt { get; set; } = DateTime.Now;

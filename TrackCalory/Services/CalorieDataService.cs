@@ -29,6 +29,7 @@ namespace TrackCalory.Services
             _ = LoadEntriesFromDatabaseAsync();
         }
 
+        // ГОЛОВНА КОЛЕКЦІЯ ЗАПИСІВ - потім використовується ViewModel-ами 
         public ObservableCollection<CalorieEntry> GetEntries() => _entries;
 
         /// <summary>

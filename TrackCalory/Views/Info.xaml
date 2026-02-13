@@ -60,7 +60,7 @@
 
             <Frame BackgroundColor="#f7d9e0" CornerRadius="10" Padding="15">
                 <VerticalStackLayout Padding="0">
-                    <Label Text="Учень 11-В класу ліцею інформаційних технологій"
+                    <Label Text="Учень 11-В класу Дніпровського наукового ліцей інформаційних технологій Дніпровської міської ради "
                        FontSize="11"
                        TextColor="Black"/>
                     <Label Text="email: axaxoma4@gmail.com"

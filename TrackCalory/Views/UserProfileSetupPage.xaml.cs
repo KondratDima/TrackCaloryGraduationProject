@@ -1,4 +1,4 @@
-using TrackCalory.Models;
+п»їusing TrackCalory.Models;
 using TrackCalory.Services;
 
 namespace TrackCalory.Views;
@@ -16,50 +16,50 @@ public partial class UserProfileSetupPage : ContentPage
     }
 
     /// <summary>
-    /// Кнопка розрахунку та збереження профілю користувача 
+    /// РљРЅРѕРїРєР° СЂРѕР·СЂР°С…СѓРЅРєСѓ С‚Р° Р·Р±РµСЂРµР¶РµРЅРЅСЏ РїСЂРѕС„С–Р»СЋ РєРѕСЂРёСЃС‚СѓРІР°С‡Р° 
     /// </summary>
     private async void OnCalculateClicked(object sender, EventArgs e)
     {
         try
         {
-            // Валідація
+            // Р’Р°Р»С–РґР°С†С–СЏ
             if (GenderPicker.SelectedIndex == -1)
             {
-                await DisplayAlert("Помилка", "Оберіть стать", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "РћР±РµСЂС–С‚СЊ СЃС‚Р°С‚СЊ", "OK");
                 return;
             }
 
             if (!double.TryParse(WeightEntry.Text, out double weight) || weight <= 0)
             {
-                await DisplayAlert("Помилка", "Введіть правильну вагу", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "Р’РІРµРґС–С‚СЊ РїСЂР°РІРёР»СЊРЅСѓ РІР°РіСѓ", "OK");
                 return;
             }
 
             if (!double.TryParse(HeightEntry.Text, out double height) || height <= 0)
             {
-                await DisplayAlert("Помилка", "Введіть правильний зріст", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "Р’РІРµРґС–С‚СЊ РїСЂР°РІРёР»СЊРЅРёР№ Р·СЂС–СЃС‚", "OK");
                 return;
             }
 
             if (!int.TryParse(AgeEntry.Text, out int age) || age <= 0)
             {
-                await DisplayAlert("Помилка", "Введіть правильний вік", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "Р’РІРµРґС–С‚СЊ РїСЂР°РІРёР»СЊРЅРёР№ РІС–Рє", "OK");
                 return;
             }
 
             if (ActivityPicker.SelectedIndex == -1)
             {
-                await DisplayAlert("Помилка", "Оберіть рівень активності", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "РћР±РµСЂС–С‚СЊ СЂС–РІРµРЅСЊ Р°РєС‚РёРІРЅРѕСЃС‚С–", "OK");
                 return;
             }
 
             if (GoalPicker.SelectedIndex == -1)
             {
-                await DisplayAlert("Помилка", "Оберіть мету", "OK");
+                await DisplayAlert("РџРѕРјРёР»РєР°", "РћР±РµСЂС–С‚СЊ РјРµС‚Сѓ", "OK");
                 return;
             }
 
-            // Конвертація значень
+            // РљРѕРЅРІРµСЂС‚Р°С†С–СЏ Р·РЅР°С‡РµРЅСЊ
             var gender = GenderPicker.SelectedIndex == 0 ? "Male" : "Female";
 
             var activityLevel = ActivityPicker.SelectedIndex switch
@@ -80,7 +80,7 @@ public partial class UserProfileSetupPage : ContentPage
                 _ => "maintain"
             };
 
-            // Створюємо профіль
+            // РЎС‚РІРѕСЂСЋС”РјРѕ РїСЂРѕС„С–Р»СЊ
             var profile = new UserProfile
             {
                 Gender = gender,
@@ -91,24 +91,32 @@ public partial class UserProfileSetupPage : ContentPage
                 Goal = goal
             };
 
-            // Розраховуємо денну норму
+            // Р РѕР·СЂР°С…РѕРІСѓС”РјРѕ РґРµРЅРЅСѓ РЅРѕСЂРјСѓ
             profile.DailyCalorieGoal = _calculationService.CalculateFullGoal(profile);
 
-            // Зберігаємо в БД
+            // Р РѕР·СЂР°С…РѕРІСѓС”РјРѕ Р±Р¶РІ
+            profile.DailyProteinGoal = _calculationService.CalculateDailyProtein(weight, activityLevel, goal);
+            profile.DailyFatGoal = _calculationService.CalculateDailyFat(profile.DailyCalorieGoal);
+            profile.DailyCarbsGoal = _calculationService.CalculateDailyCarbs(profile.DailyCalorieGoal, profile.DailyProteinGoal, profile.DailyFatGoal);
+
+            // Р—Р±РµСЂС–РіР°С”РјРѕ РІ Р‘Р”
             await _databaseService.SaveUserProfileAsync(profile);
 
-            // Показуємо результат
-            await DisplayAlert(" Успіх!",
-                $"Ваша денна норма калорій: {profile.DailyCalorieGoal:F0} ккал\n\n" +
-                $"Профіль збережено!",
-                "Почати");
+            // РџРѕРєР°Р·СѓС”РјРѕ СЂРµР·СѓР»СЊС‚Р°С‚
+            await DisplayAlert("вњ… РџСЂРѕС„С–Р»СЊ СЃС‚РІРѕСЂРµРЅРѕ!",
+                                $"Р’Р°С€Р° РґРµРЅРЅР° РЅРѕСЂРјР°:\n\n" +
+                                $"рџ”Ґ РљР°Р»РѕСЂС–С—: {profile.DailyCalorieGoal:F0} РєРєР°Р»\n" +
+                                $"рџҐ© Р‘С–Р»РєРё: {profile.DailyProteinGoal:F0} Рі\n" +
+                                $"рџ§€ Р–РёСЂРё: {profile.DailyFatGoal:F0} Рі\n" +
+                                $"рџЌћ Р’СѓРіР»РµРІРѕРґРё: {profile.DailyCarbsGoal:F0} Рі\n\n" ,
+                                "OK");
 
-            // Переходимо на головну сторінку
+            // РџРµСЂРµС…РѕРґРёРјРѕ РЅР° РіРѕР»РѕРІРЅСѓ СЃС‚РѕСЂС–РЅРєСѓ
             Application.Current.MainPage = new AppShell();
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Помилка", $"Не вдалося зберегти профіль:\n{ex.Message}", "OK");
+            await DisplayAlert("РџРѕРјРёР»РєР°", $"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РїСЂРѕС„С–Р»СЊ:\n{ex.Message}", "OK");
         }
     }
 }

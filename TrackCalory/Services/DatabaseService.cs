@@ -114,6 +114,34 @@ namespace TrackCalory.Services
                                  .ToListAsync();
         }
 
+        /// <summary>
+        /// Отримати БЖВ за конкретну дату
+        /// </summary>
+        public async Task<(double protein, double fat, double carbs)> GetMacrosForDateAsync(DateTime date)
+        {
+            try
+            {
+                await InitAsync();
+
+                var startDate = date.Date;
+                var endDate = date.Date.AddDays(1);
+
+                var entries = await _database.Table<CalorieEntry>()
+                    .Where(e => e.Date >= startDate && e.Date < endDate)
+                    .ToListAsync();
+
+                double totalProtein = entries.Sum(e => e.Protein ?? 0);
+                double totalFat = entries.Sum(e => e.Fat ?? 0);
+                double totalCarbs = entries.Sum(e => e.Carbs ?? 0);
+
+                return (totalProtein, totalFat, totalCarbs);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Помилка отримання БЖВ: {ex.Message}");
+                return (0, 0, 0);
+            }
+        }
 
         // ========== МЕТОДИ ДЛЯ РОБОТИ З ПРОФІЛЕМ КОРИСТУВАЧА ==========
 

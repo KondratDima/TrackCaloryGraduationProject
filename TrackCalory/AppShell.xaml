@@ -8,7 +8,7 @@
     Title="CalorieTracker"
     Shell.BackgroundColor="#f4becb"
     Shell.TitleColor="White"
-    TabBarForegroundColor="#f4becb"
+    TabBarForegroundColor="White"
     >
 
     <ShellContent Title="Трекер калорій"
@@ -19,7 +19,7 @@
     <ShellContent Title="Додати"
                   ContentTemplate="{DataTemplate views:AddEntryPage}"
                   Route="AddEntryPage" />
-    <ShellContent Title="Налаштування"
+    <ShellContent Title="Зміна калорійності"
                   ContentTemplate="{DataTemplate views:UserProfileSetupPage}"
                   Route="UserProfileSetupPage"/>
     <ShellContent Title="О додатку"
